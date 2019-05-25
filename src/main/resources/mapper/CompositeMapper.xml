@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.air.bigearth.apps.image.mapper.CompositeMapper">
+
+    <insert id="insert" parameterType="org.air.bigearth.apps.image.domain.Composite">
+		insert into apps_t_composite
+		(datakey,sync,context,appName,timeout,classPath,images,outputPath,polygonStr,cellSize,selectMethod,hdfsUrl,numPartitions,bandsList,userId)
+		values(
+		#{datakey},#{sync},#{context},#{appName},#{timeout},#{classPath},#{images},#{outputPath},
+		#{polygonStr},#{cellSize},#{selectMethod},#{hdfsUrl},#{numPartitions},#{bandsList},#{userId}
+		)
+	</insert>
+    
+    <select id="searchByParamsPage" parameterType="java.util.Map" resultType="org.air.bigearth.apps.image.domain.Composite">
+        select * from apps_t_composite  limit 10 offset 10
+    </select>
+	
+</mapper> 

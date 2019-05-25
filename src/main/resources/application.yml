@@ -1,0 +1,107 @@
+mybatis:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/apps
+    username: postgres
+    password: 18161816
+
+    #driverClassNam: com.mysql.jdbc.Driver
+    #url: jdbc:mysql://localhost:3306/apps?useUnicode=true&characterEncoding=utf-8
+    #username: root
+    #password: root
+  redisson:
+    #address: redis://192.168.242.128:6379
+    address: redis://127.0.0.1:6379
+  profiles:
+    active: dev
+  application:
+    name: spring-cloud-apps
+    # 模板引擎
+    thymeleaf:
+      mode: LEGACYHTML5
+      encoding: utf-8
+      # 禁用缓存
+      cache: false
+  # 文件上传
+  servlet:
+    multipart:
+      max-file-size:  6000MB
+      max-request-size:  6000MB
+  messages:
+    basename: i18n.mess
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+# 开发环境配置
+server:
+  # 服务端口
+  port: 8080
+  servlet:
+    # 项目contextPath
+    context-path: /
+    session:
+      timeout: 30m
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+    max-http-post-size: 209715200
+
+
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: postgresql #mysql
+  # 分页合理化
+  reasonable: true
+  # 是否支持接口参数来传递分页参数，默认false
+  supportMethodsArguments: true
+  params: count=countSql
+
+# Shiro
+shiro:
+  user:
+    # 登录地址
+    loginUrl: /login
+    # 权限认证失败地址
+    unauthorizedUrl: /unauth
+    # 首页地址
+    #indexUrl: /index
+    # 验证码开关
+    captchaEnabled: true
+  cookie:
+    # 设置Cookie的域名 默认空，即当前访问的域名
+    domain:
+    # 设置cookie的有效访问路径
+    path: /
+    # 设置HttpOnly属性
+    httpOnly: true
+    # 设置Cookie的过期时间，天为单位
+    maxAge: 30
+  session:
+    # Session超时时间（默认30分钟）
+    expireTime: 30
+    # 同步session到数据库的周期（默认1分钟）
+    #dbSyncPeriod: 1
+    # 相隔多久检查一次session的有效性，默认就是10分钟
+    validationInterval: 1
+
+# 是否开启swagger
+swagger:
+  enabled: true
+
+#开发环境
+breakpoint:
+  upload:
+    dir: /localScpDir/
+    #1024*1024=1 048 576,5M=5 242 880
+    chunkSize: 5 242 880

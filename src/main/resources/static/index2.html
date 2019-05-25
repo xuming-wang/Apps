@@ -1,0 +1,124 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>系统首页</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet" />
+    <style type="text/css">
+        table {
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        table thead th {
+            border: 1px solid black;
+        }
+        table tbody td {
+            border: 1px solid black;
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+<div align="right">
+    <a href="swagger-ui.html" style="font-style: normal;" target="big">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;进入swagger</a>&nbsp;&nbsp;
+    <a href="toRegister" th:href="@{toRegister}">注册</a>&nbsp;&nbsp;
+    <a href="/system/logout" target="big">退出</a>
+    <!--<a href="logout" th:href="@{logout}">注销</a>&nbsp;&nbsp;-->
+    <a href="webUploader2" th:href="@{webUploader2}">文件上传</a>&nbsp;&nbsp;
+    <a href="fileDownload" th:href="@{fileDownload}">文件下载</a>&nbsp;&nbsp;
+    <a href="fileDownload2" th:href="@{fileDownload2}">图片文件下载</a>&nbsp;&nbsp;
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><!--系统首页--></h3>
+    </div>
+</div>
+
+<!--<table cellpadding="0" cellspacing="0">
+    <thead>
+    <th>序号</th>
+    <th>corner_ll_lon_product</th>
+    <th>file_name_band_4</th>
+    <th>image_quality_tirs</th>
+    <th>file_name_band_3</th>
+    <th>file_name_band_2</th>
+    <th>file_name_band_1</th>
+    &lt;!&ndash;<th>truncation_oli</th>&ndash;&gt;
+    </thead>
+    <tbody>
+    <tr th:each="entries,stat:${listMtls}" th:style="'background-color:'+@{${stat.odd}?'#F2F2F2'}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${entries['corner_ll_lon_product']}"></td>
+        <td th:text="${entries['file_name_band_4']}"></td>
+        <td th:text="${entries['image_quality_tirs']}"></td>
+        <td th:text="${entries['file_name_band_3']}"></td>
+        <td th:text="${entries['file_name_band_2']}"></td>
+        <td th:text="${entries['file_name_band_1']}"></td>
+        &lt;!&ndash;<td th:text="${entries['truncation_oli']}"></td>&ndash;&gt;
+        &lt;!&ndash; 写法一：
+        <td th:text="${entries['scourse']['cname']}"></td>
+        <td th:text="${entries['scourse']['cscore']}"></td>&ndash;&gt;
+        &lt;!&ndash; 写法二：
+        <td th:text="*{entries['scourse']['cname']}"></td>
+        <td th:text="*{entries['scourse']['cscore']}"></td>&ndash;&gt;
+        &lt;!&ndash; 写法三：&ndash;&gt;
+        &lt;!&ndash;<td th:object="${entries['scourse']}">
+            <span th:text="*{['cname']}"></span>
+        </td>
+        <td th:object="${entries['scourse']}">
+            <span th:text="*{['cscore']}"></span>
+        </td>&ndash;&gt;
+    </tr>
+    </tbody>
+</table>-->
+
+<script th:src="@{jquery-3.1.1.js}" type="text/javascript"></script>
+<script th:src="@{bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:inline="javascript">
+    var single = [[${singlePerson}]];
+    console.log(single.name+"/"+single.age);
+    function getName(name) {
+        console.log(name);
+    }
+    /*$.ajax({
+        type: "post",
+        url: baseUrl + "/card/default/",
+        dataType: "json",
+        data: {},
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function(data) {
+
+        })};*/
+
+    $.ajax({
+        url : "/retrieve/query",
+        data : JSON.stringify(
+            $.toJSON(cs.params)
+        ),
+        dataType : "json",
+        contentType:"application/json;charset=utf-8",
+        type: "post",
+        success : function(data) {
+
+            alert(JSON.stringify(data));
+
+
+
+        },
+        error : function(xhr, code, what) {
+            $("#result-listview").datalistview("loading", [ false ]);
+            if(xhr.status == 404){
+                $("#empty-result-panel").show();
+            }
+        }
+
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.air.bigearth.apps.system.mapper.basic.RoleResourceMapper" >
+  <resultMap id="BaseResultMap" type="org.air.bigearth.apps.system.domain.basic.RoleResource" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="resource_id" property="resourceId" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from apps_t_sys_role_resource
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.air.bigearth.apps.system.domain.basic.RoleResource" >
+    insert into apps_t_sys_role_resource (id, role_id, resource_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, #{resourceId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.air.bigearth.apps.system.domain.basic.RoleResource" >
+    update apps_t_sys_role_resource
+    set role_id = #{roleId,jdbcType=VARCHAR},
+      resource_id = #{resourceId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, role_id, resource_id
+    from apps_t_sys_role_resource
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, role_id, resource_id
+    from apps_t_sys_role_resource
+  </select>
+</mapper>

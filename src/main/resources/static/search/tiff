@@ -1,0 +1,18 @@
+{
+    "input": {
+        "bandsList": [
+            4,
+            5
+        ],
+        "images": [
+            "/home/zds/Documents/mywork/data/TiffPic/LC08/test6/LC08_L1TP_122032_20130825",
+            "/home/zds/Documents/mywork/data/TiffPic/LC08/test6/LC08_L1TP_122031_20140727"
+        ],
+        "outputPath": "/home/zds/Documents/mywork/data/TiffPic/LC08/tiffoutputpath/test20.TIFF",
+        "polygonStr": "{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[432585,4516893],[432585,4595265],[620905,4595265],[620905,4516893],[432585,4516893]]]}}",
+        "cellSize": 30,
+        "selectMethod": "ndvi",
+        "hdfsUrl": "file:///",
+        "numPartitions": 100
+    }
+}

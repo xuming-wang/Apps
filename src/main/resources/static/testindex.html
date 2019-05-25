@@ -1,0 +1,3521 @@
+
+<!DOCTYPE html>
+<!--[if IE 7 ]>		 <html class="no-js ie ie7 lte7 lte8 lte9" lang="en-US"> <![endif]-->
+<!--[if IE 8 ]>		 <html class="no-js ie ie8 lte8 lte9" lang="en-US"> <![endif]-->
+<!--[if IE 9 ]>		 <html class="no-js ie ie9 lte9>" lang="en-US"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en-US">
+-->
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="BigEarth Data for DBAR" />
+    <title>BigEarth Data for DBAR</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <link href="/css/bootstrap.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <link href="/css/jquery.noty.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/jquery.noty.min.js"></script>
+    <link rel="stylesheet" href="/css/jqueryui.min.css" />
+    <script type="text/javascript" src="/js/jqueryui.min.js"></script>
+    <script type="text/javascript" src="/js/browserdetecter.js"></script>
+    <link href="/css/ol.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/ol.js"></script>
+    <link href="/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-datepicker.zh-CN.min.js"></script>
+    <link href="/css/bootstrap.datalistview.css" rel="stylesheet"/>
+    <link href="/css/jquery.datalistview.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/jquery.datalistview.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.min.js"></script>
+    <link rel="stylesheet" href="/css/colorbox.css" />
+    <script type="text/javascript" src="/js/jquery.colorbox-min.js"></script>
+    <script type="text/javascript" src="/js/jquery.md5.js"></script>
+
+    <script type="javascript/html" id="result-panel-template">
+	<div id="result-data-panel">
+		<div id="pager" style="background-color: rgb(121, 203, 230);"></div>
+		<div>
+			<div id="result-listview"></div>
+		</div>
+		<div id="info" class="pagination-info"></div>
+
+		<div style="text-align: right;">
+			<button type="button" class="btn btn-info snd-search">二次筛选</button>
+
+			<div class="checkbox" style="display: inline-block;">
+				<label><input type="checkbox" id="show_outline_btn"/> 显示边框 </label>
+			</div>
+			<span style="display: inline-block; width: 15px;"></span>
+			<button type="button" class="btn btn-success add-car-btn">收藏数据</button>
+		</div>
+	</div>
+</script>
+
+    <link href="/css/common.css" rel="stylesheet"/>
+
+
+    <style>
+        html, body, #mapdiv {
+            height: 100%;
+        }
+
+        .search-panel{
+            background: #a6e1ec;
+            width: 100%;
+            height: 100%;
+        }
+
+        li.dtree-dir, li.dtree-file {
+            margin-left: -24px;
+        }
+
+        .footer-body {
+            height: 40px;
+            bottom: 0px;
+            position: absolute;
+            width: 100%;
+        }
+
+        .footer-fixed {
+            display: none;
+        }
+
+        #head-navi {
+            margin-bottom: 0px;
+        }
+
+        .ol-mouse-position {
+            background: rgb(59, 106, 228);
+            color: white;
+        }
+
+        .ol-zoom {
+            bottom: .5em;
+            right: .5em;
+            top: inherit;
+            left: inherit;
+        }
+
+        .full_rel {
+            height: 100%;
+            width: 100%;
+        }
+
+        .full_abs {
+            height: auto;
+            position: absolute;
+            width: 100%;
+            left: 0px;
+            right: 0px;
+            top: 0px;//距顶部距离
+        bottom: 0px;//底部
+        }
+
+        .ctr-s {
+            width: 540px;
+            right: auto;
+            z-index: 99;
+        }
+
+        .ctr-p {
+            margin: 0 auto;
+        }
+
+        .data-tg-btn {
+            display: block;
+        }
+
+        @media ( max-width : 992px) {
+            .ctr-p {
+                height: auto;
+            }
+            .full_abs {
+                height: 320px;
+                position: relative;
+                width: 100%;
+                top: auto;
+                bottom: auto;
+                margin-top: 64px;
+            }
+            .footer-body {
+                bottom: auto;
+                position: relative;
+            }
+            .ctr-s {
+                margin-top: 0px;
+                height: auto;
+            }
+            .data-tg-btn {
+                display: none;
+            }
+        }
+
+        .search-input {
+            padding: 0px;
+            height: 26px;
+            border-radius: 0px;
+        }
+
+        .input-error {
+            border-color: #a94442;
+            -webkit-box-shadow: 0px 0px 1px rgba(255, 0, 0, 0.5);
+            box-shadow: 0px 0px 1px rgba(255, 0, 0, 0.5);
+        }
+
+        .sel-option {
+            display: none;
+            padding-top: 10px;
+            padding-left: 35px;
+            height: 37px;
+        }
+
+        .sel-option.active {
+            display: block;
+        }
+
+        #region-input-div select {
+            display: inline-block;
+            width: 145px;
+        }
+
+        #lat-lng-input input {
+            width: 69px;
+            display: inline-block;
+        }
+
+        #row-col-input input {
+            width: 64px;
+            display: inline-block;
+        }
+
+        #map-area-sel span {
+            font-size: 23px;
+            cursor: pointer;
+            color: rgb(94, 184, 200);
+            padding: 0 10px;
+        }
+
+        .sg-2-label {
+            display: inline-block;
+            width: 45px;
+        }
+
+
+        .tipbox:before, .tipbox:after {
+            content: "";
+            position: absolute;
+            border-style: dashed dashed solid dashed;
+            line-height: 1;
+            display: inline-block;
+        }
+
+        .tipbox:after {
+            left: 39px;
+            border-color: transparent transparent #39B3DB;
+            border-width: 6px;
+            top: -13px;
+            z-index: 1080;
+        }
+
+        .tipbox:before {
+            left: 40px;
+            border-color: transparent transparent #FFF;
+            border-width: 5px;
+            top: -10px;
+            z-index: 1081;
+        }
+
+        .tipbox {
+            position: absolute;
+            top: 30px;
+            left: 0px;
+            border-top: 1px solid #39B3DB;
+            display: block;
+            display: none;
+        }
+
+        .tipbox.active {
+            display: block;
+        }
+
+        .geometry-item {
+            position: relative;
+            display: inline-block;
+            /* display: none; */
+            width: 90px;
+            height: 20px;
+            margin-left: -6px;
+        }
+
+        .geometry-tab {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 90px;
+            text-align: center;
+            border-bottom: 1px solid rgb(57, 179, 219);
+            padding-bottom: 9px;
+            cursor: pointer;
+        }
+
+        .geometry-tab.active {
+            color: rgb(57, 179, 219)
+        }
+
+        #point-sel-icon, #rect-sel-icon, #poly-sel-icon {
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .ms-gray-btn, .ms-active-btn {
+            display: none;
+        }
+
+        .ms-gray-btn.active, .ms-active-btn.active {
+            display: inline-block;
+        }
+
+
+        #main-panel {
+            background: white;
+            padding: 10px;
+        }
+
+        #dataset-btn {
+            display: inline-block;
+            background: rgb(0, 100, 200);
+            color: white;
+            cursor: pointer;
+            padding: 3px 10px;
+            margin-left: 10px;
+        }
+
+        #dataset-name {
+            display: inline-block;
+            color: red;
+            padding-left: 8px;
+            width: 370px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-overflow: ellipsis; /* IE/Safari */
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis; /* Opera */
+            -moz-binding: url("ellipsis.xml#ellipsis"); /*FireFox*/
+        }
+
+        #date-panel input, #date-panel select {
+            display: inline-block;
+        }
+
+        #date-panel {
+            display: inline-block;
+            padding-left: 10px;
+        }
+
+        .search-group-1, .search-group-2, .search-group-3, .search-group-4 {
+            width: 480px;
+        }
+
+        .search-group-2 {
+            margin-top: 5px;
+        }
+
+        .add-car-btn, .download-btn, .snd-search {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            width: 100px;
+        }
+
+        .snd-search {
+            float: left;
+            margin-top: 5px;
+        }
+
+        .data-hide-btn, .data-show-btn {
+            cursor: pointer;
+        }
+
+        body .datepicker {
+            margin-top: 0px;
+        }
+
+        /* 搜索结果字段 */
+        .data-img, .data-info, .field_fmt {
+            float: left;
+        }
+
+        .field_fmt {
+            padding-left: 4px;
+        }
+
+        .field_fmt .r {
+            min-width: 320px;
+        }
+
+        .field_fmt .t, .data-item-chk {
+            padding-right: 2px;
+        }
+
+        .field_fmt .t {
+            width: 70px;
+        }
+
+        .field_fmt .v {
+            min-width: 80px;
+        }
+
+        .dlv-row .dlv-cell {
+            padding: 4px;
+        }
+
+        #all-datasets-dlg{
+            background:#ffffff
+        }
+        /* 数据集目录树 */
+        .dtree-leaf {
+            padding-left: 0px;
+        }
+
+        .dtree-leaf:hover {
+            background: rgb(226, 226, 226);
+        }
+
+        .leaf-dataname-span {
+            padding-left: 6px;
+        }
+
+        .dtree-leaf.dtree-selected {
+            background: rgb(1, 156, 222);
+            color: white;
+        }
+
+        .dtree-dir {
+            cursor: pointer;
+        }
+
+        .dtree-selected-tips {
+            padding-bottom: 10px;
+            color: rgb(1, 156, 222);
+        }
+
+        .dtree-selected-tips:before {
+            content: "已选择：";
+            /* background-color:yellow; */
+            color: red;
+            font-weight: bold;
+        }
+
+        .ol-scale-line {
+            right: 38px;
+            left: auto;
+        }
+
+        .ol-mouse-position {
+            background: rgba(0, 60, 136, 0.3) none repeat scroll 0% 0%;
+            border-radius: 4px;
+            bottom: 32px;
+            padding: 2px;
+            font-size: 12px;
+            position: absolute;
+            right: 38px;
+            top: auto;
+            left: auto;
+            position: absolute;
+        }
+
+        .ol-rotate {
+            top: auto;
+            bottom: 60px;
+        }
+
+        .amap-logo {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            z-index: 160;
+            margin: 0px 1px;
+        }
+
+        .amap-copyright {
+            position: absolute;
+            left: 70px;
+            height: 16px;
+            bottom: 0px;
+            font-size: 11px;
+            line-height: 16px;
+            font-family: Arial, sans-serif;
+            z-index: 160;
+        }
+
+        #empty-result-panel{
+            display: none;
+            width:100%;
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px solid #019CDE
+        }
+
+        #empty-result-panel>div{
+            padding-top: 15px;
+            padding-bottom: 15px;
+            font-size: 18px;
+        }
+
+
+
+
+        .pagination-info{
+            float: none;
+        }
+
+        #progress {
+            position: absolute;
+            bottom: 3px;
+            left: 0;
+            height: 2px;
+            background: red;
+            width: 0;
+            transition: width 250ms;
+        }
+
+    </style>
+
+
+</head>
+<body>
+
+<style>
+    .cart_txt {
+        position: absolute;
+        border-radius: 11px;
+        font-size: 10px;
+        padding: 2px;
+        background-color: rgba(255, 255, 0, 0.8);
+        width: 22px;
+        height: 22px;
+        top: 0px;
+        padding-top: 3px;
+        text-align: center;
+    }
+
+    .cart_txt a {
+        color: red;
+    }
+
+    .cart_txt a:hover {
+        text-decoration: none;
+    }
+</style>
+
+<script type="text/javascript" src="/js/angular.min.js"></script>
+
+<style>
+    .visible-panel {
+        position: absolute;
+        top: 70px;
+        right: 10px;
+        z-index: 1;
+        width: 100px;
+        padding-left: 10px;
+        border-radius: 5px;
+        background: #E8E8E8
+    }
+</style>
+
+<div class="visible-panel" ng-app="advanced_search" ng-controller="visible_layers">
+
+    <div class="checkbox" ng-hide="sel_layer">
+        <label>
+            <input type="checkbox" ng-model="sel" ng-change="sel_layer_evt()"/> 显示隐藏
+        </label>
+    </div>
+
+    <div class="checkbox" ng-hide="outline_layer" style="margin-top: 10px;">
+        <label> <input type="checkbox" ng-model="outline" ng-change="outline_layer_evt()"/> 影像边框
+        </label>
+    </div>
+
+</div>
+
+<script>
+
+    $(function() {
+        $( ".visible-panel" ).draggable();
+    });
+
+    var as = angular.module("advanced_search", []);
+
+    as.controller("visible_layers", function($scope, $http){
+
+        $scope.sel_layer = true;
+        $scope.outline_layer = true;
+
+        $scope.sel_layer_evt = function(){
+            var gm = getGeoManager();
+            if(this.sel){
+                gm.show();
+            }else{
+                gm.hide();
+            }
+        };
+
+        $scope.outline_layer_evt = function(){
+            var dr = getDataRange();
+            if(this.outline){
+                dr.show();
+            }else{
+                dr.hide();
+            }
+        };
+
+    });
+</script>
+
+<style>
+    #bands-bar{
+        position: absolute;
+        z-index:1;
+        top: 145px;
+        right: 10px;
+        width: 215px;
+        background: #fff;
+        padding: 10px 15px;
+        padding-right: 0px;
+        border-radius: 3px;
+        border: 1px solid rgb(155, 153, 147);
+        display: none;
+    }
+
+    #bands-bar .form-control{
+        display: inline-block;
+        padding: 0px 0px 0px 5px;
+        margin-right: 10px;
+        width: initial;
+        height: 30px;
+    }
+
+    #bands-bar .band-label{
+        font-weight: bold;
+        color: red;
+    }
+
+    .band-title{
+        color: rgb(1, 156, 222);
+        margin-bottom: 10px;
+        cursor: pointer;
+        display: block;
+    }
+
+    .band-open-eye,.band-close-eye{
+        display: inline-block;
+        font-size: 18px;
+        color: #B9B9B9;
+        cursor: pointer;
+    }
+
+    .band-open-eye.active,.band-close-eye.active{
+        color: rgb(66, 139, 202);
+    }
+
+    .show-outline-btn,.hide-outline-btn{
+        display: inline-block;
+        font-size: 18px;
+        cursor: pointer;
+        color: rgb(66, 139, 202);
+        margin-right: 5px;
+    }
+
+    .band-open-eye{
+        display: none;
+    }
+
+</style>
+
+<script>
+
+    var cur_band_layerid = null;
+    var cur_band_index = null;
+
+    var reset_band_panel = function(){
+        mapctx.removeLayer(cur_band_layerid);
+        $("#bands-bar").hide();
+        cur_band_index = null;
+    };
+
+    var reinit_band_layer = function(layerid, bands){
+        if(cur_band_layerid != layerid){
+            mapctx.removeLayer(layerid);
+            cur_band_layerid = layerid;
+
+            $.ajax({
+                url: "http://www.icarto.cn/tiles/landsat/"+cur_band_layerid,
+                data:{
+                    "format": "json",
+                    "crs": "epsg:4326"
+                },
+                dataType:"JSONP",
+                success: function(data){
+                    var bbox = mapctx.transform(data["bbox"]);;
+                    mapctx.editor_map.getView().fit(bbox, mapctx.editor_map.getSize());
+                    mapctx.reinit_landsat_layer({
+                        dataid: cur_band_layerid,
+                        bands: bands
+                    });
+                },
+                error: function(){
+                    dialogs.error("地图信息获取失败！");
+                }
+            });
+        }else{
+            mapctx.reinit_landsat_layer({
+                dataid: cur_band_layerid,
+                bands: bands
+            });
+        }
+    };
+
+    var reinit_band_select = function(dataid){
+        $("#bands-bar").find(".band-title").text(dataid);
+        $("#bands-bar").show();
+        $("#band-r-select,#band-g-select,#band-b-select").on("change", function(){
+            var r_band = $("#band-r-select").val();
+            var g_band = $("#band-g-select").val();
+            var b_band = $("#band-b-select").val();
+
+            mapctx.reinit_landsat_layer({
+                dataid: dataid,
+                bands: [r_band, g_band, b_band].join(",")
+            });
+        });
+    };
+
+    var getBands = function(){
+        var r = $("#band-r-select").val();
+        var g = $("#band-g-select").val();
+        var b = $("#band-b-select").val();
+        return [r,g,b].join(",");
+    };
+
+    var bands_format_action = function(index, source, column) {
+
+        var $div = format_action(index, source, column);
+
+        var adata = source.data[index];
+        var layerid = adata.dataid;
+        $parent = $("<div></div>");
+
+
+        $parent.append($show_outline).append($hide_outline);
+
+        $close_eye = $('<span title="显示影像图" id="show_img_btn_'+(cs.beg + index)+'" class="glyphicon glyphicon-eye-close band-close-eye" aria-hidden="true"></span>');
+        $open_eye = $('<span title="隐藏影像图" class="glyphicon glyphicon-eye-open band-open-eye" aria-hidden="true"></span>');
+
+        if("layerexists" in adata && adata["layerexists"] == 1){
+
+            $close_eye.addClass("active").on("click", function(e){
+                e.stopPropagation();
+                if(cur_band_index != null && (cur_band_index < cs.beg || cur_band_index >= cs.end)){
+                    mapctx.removeLayer(cur_band_layerid);
+                }
+                $(".band-open-eye:visible").trigger("click");
+                $(this).siblings(".band-open-eye").css("display", "inline-block");
+                $(this).hide();
+                reinit_band_select(layerid);
+                var bands = getBands();
+                reinit_band_layer(layerid, bands);
+                cur_band_index = cs.beg + index;
+            });
+
+            $open_eye.addClass("active").on("click", function(e){
+                e.stopPropagation();
+                $(this).hide();
+                $(this).siblings(".band-close-eye").css("display", "inline-block");
+                mapctx.removeLayer(layerid);
+                $("#bands-bar").hide();
+                cur_band_layerid = null;
+                cur_band_index = null;
+            });
+        }else{
+            $close_eye.on("click", function(e){
+                e.stopPropagation();
+            });
+        }
+        $parent.append($close_eye).append($open_eye);
+        $div.append($parent);
+        return $div;
+    };
+
+    $(function() {
+        $( "#bands-bar" ).draggable();
+    });
+
+</script>
+
+<!--搜索界面 -->
+<div class="full_rel ctr-p">
+
+    <div class="full_abs">
+        <div class="full_rel">
+            <div id="mapdiv" class="map_container"></div>
+
+        </div>
+    </div>
+
+    <div class="full_abs ctr-s" style="bottom: auto">
+        <div class="full_rel "  style="height: auto">
+            <table style="width: 100%">
+                <tr>
+                    <td  id="main-panel">
+
+                        <div class="search-panel">
+                            <div class="search-panel-cnt">
+                                <table>
+                                    <tr>
+                                        <td style="vertical-align: top;">
+
+                                            <div class="search-group-1">
+                                                <img src="http://www.gscloud.cn/static/img/search/dataset.png">
+                                                <span id="dataset-btn">Data Sets</span> <span id="dataset-name">Select Your Data Set(s)</span>
+                                            </div>
+
+                                            <div class="search-group-2">
+                                                <div style="display: inline-block;">
+                                                    <img src="http://www.gscloud.cn/static/img/search/geometry.png">
+                                                </div>
+                                                <div style="display: inline-block; margin-left: 15px; padding-top: 20px;">
+
+                                                    <div class="geometry-item srch_lat srch_lng">
+                                                        <div class="geometry-tab mapsel" for="#map-area-sel">Area Condition</div>
+                                                        <div class="tipbox"></div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+
+                                            <div id="map-area-sel" class="sel-option">
+                                                <div id="point-sel-icon">
+                                                    <span style="font-size: 14px;cursor: auto;padding: 0px;color: #333;">Point：</span>
+                                                    <img width="26px" class="ms-gray-btn active" src="http://www.gscloud.cn/static/img/search/point_icon.png" title="点">
+                                                    <img width="26px" class="ms-active-btn" src="http://www.gscloud.cn/static/img/search/point_icon_active.png" title="点">
+                                                </div>
+
+                                                <span style="display:inline-block;width:35px;"></span>
+
+                                                <div id="rect-sel-icon">
+                                                    <span style="font-size: 14px;cursor: auto;padding: 0px;color: #333;">box：</span>
+                                                    <img width="26px" class="ms-gray-btn active" src="http://www.gscloud.cn/static/img/search/rect_icon.png" title="矩形">
+                                                    <img width="26px" class="ms-active-btn" src="http://www.gscloud.cn/static/img/search/rect_icon_active.png" title="矩形">
+                                                </div>
+
+                                                <span style="display:inline-block;width:35px;"></span>
+
+                                                <div id="poly-sel-icon">
+                                                    <span style="font-size: 14px;cursor: auto;padding: 0px;color: #333;">polygon：</span>
+                                                    <img width="26px" class="ms-gray-btn active" src="http://www.gscloud.cn/static/img/search/poly_icon.png" title="任意多边形">
+                                                    <img width="26px" class="ms-active-btn" src="http://www.gscloud.cn/static/img/search/poly_icon_active.png" title="任意多边形">
+                                                </div>
+                                            </div>
+                                            <div style="padding-top: 20px;" class="search-group-3">
+                                                <img src="http://www.gscloud.cn/static/img/search/datadate.png">
+                                                <div id="date-panel">
+                                                    <div style="display: inline-block; margin-right: 34px;" class="datadate">
+                                                        Date Range：
+                                                        <input style="width: 100px;" id="sdate-input" class="form-control search-input" value="2014-07-08"/> to
+                                                        <input style="width: 100px;" id="edate-input" class="form-control search-input" value="2014-09-13"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td style="padding-left: 18px; vertical-align: bottom;">
+                                            <button type="button" class="btn btn-warning" id="reset-search-btn" style="display: block; margin-bottom: 5px;">Reset</button>
+                                            <button type="button" class="btn btn-warning" id="visual-composite-btn" style="display: block; margin-bottom: 5px;">Visual Composite</button>
+                                            <button type="button" class="btn btn-warning" id="pro-composite-btn" style="display: block; margin-bottom: 5px;">Production Composite</button>
+                                            <button type="button" class="btn btn-success" id="search-btn" style="display: block;">Search</button>
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="empty-result-panel">
+                            <div>当前数据集下没有数据！</div>
+                        </div>
+
+                        <div id="result-panel" style="display: none; width:100%; margin-top: 20px;">
+                            <div id="result-data-panel">
+                                <div id="pager" style="background-color: rgb(121, 203, 230);"></div>
+                                <div>
+                                    <div id="result-listview"></div>
+                                </div>
+                                <div id="info" class="pagination-info"></div>
+
+                                <div style="text-align: right;">
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="data-tg-btn">
+                        <img src="http://www.gscloud.cn/static/img/search/left_icon.png" width="20px"	class="data-hide-btn">
+                        <img src="http://www.gscloud.cn/static/img/search/right_icon.png" width="20px"	class="data-show-btn" style="display: none">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .footer-copyright {
+        text-align: left;
+        color: white;
+
+    }
+    .foot-info {
+        vertical-align: text-bottom;
+        display: inline-block;
+        padding-bottom: 3px;
+    }
+</style>
+
+<script type="text/javascript" src="/js/constants.js"></script>
+<script type="text/javascript" src="/js/dialogs.js"></script>
+
+<script type="text/javascript">
+
+
+    $(function () {
+
+        left_navi_handler();
+
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    var csrftoken = $.cookie('csrftoken');
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+    });
+
+
+    function adjustFoot() {
+
+        function getViewportInfo() {
+            var w = mmV("Width");
+            var h = mmV("Height");
+            return {w: w, h: h};
+        }
+
+        function mmV(c) {
+            var v = [
+                window["inner" + c],
+                document.documentElement["client" + c]
+            ]
+
+            var r = 0;
+            for (var i = 0; i < v.length; i++) {
+                if (v[i] > r) {
+                    r = v[i];
+                }
+            }
+            return r;
+        }
+
+
+        if ($("#foot_container").length > 0) {
+            var vinfo = null;
+            try {
+                vinfo = getViewportInfo();
+            } catch (e) {
+                return;
+            }
+            var docH = $(document).height();
+
+            if (vinfo.h == docH) {
+                $("#foot_container").css({"position": "fixed"});
+                $("#foot_container_warp").show();
+            } else {
+                $("#foot_container").css({"position": "relative"});
+                $("#foot_container_warp").hide();
+            }
+        }
+    }
+
+    $(function () {
+        if ($("#foot_container").length > 0) {
+            $(document.body).append('<div id="foot_container_warp" style="width: 100%;display: none"></div>');
+            $("#foot_container_warp").height($("#foot_container").height());
+
+            $(window).resize(function (e) {
+                adjustFoot();
+            });
+        }
+        adjustFoot();
+        window.setTimeout(function () {
+            adjustFoot();
+        }, 100);
+    });
+
+    var left_navi_handler = function () {
+        $(".left-navi-title").on("click", function () {
+            if($(this).hasClass("active")){
+                $(this).find(".jian_btn").removeClass("active");
+                $(this).find(".jia_btn").addClass("active");
+                $(this).removeClass("active");
+            }else{
+                $(".left-navi-title.active").trigger("click");
+                $(this).find(".jian_btn").addClass("active");
+                $(this).find(".jia_btn").removeClass("active");
+                $(this).addClass("active");
+            }
+        });
+    };
+
+</script>
+
+
+
+<script type="text/javascript" >
+
+
+
+    var charge_datas = {"428": "高分一号 pms", "430": "高分一号 wfv", "434": "高分二号 pms", "436": "资源三号 mux", "437": "资源三号 nad", "438": "资源三号 tlc", "444": "实践九号A pms", "445": "实践九号B irs", "482": "高分一号_PMS", "483": "高分一号 B 星_PMS", "484": "高分一号 C 星_PMS", "485": "高分一号 D 星_PMS\n", "486": "高分二号_PMS", "487": "高分二号_MSS", "488": "高分三号_SAR", "490": "资源三号 01 星", "491": "资源三号 02 星_DLC", "492": "资源三号 02 星_NAD", "493": "资源三号 02 星_PMS", "494": "资源三号 02 星_TMS", "495": "资源三号 02 星_MUX", "496": "资源一号 02C_HRC", "497": "资源一号 02C_PMS"};
+
+    <!--显示详细信息 -->
+    var show_meta_info = function (pid, dataid) {
+        $.ajax({
+            url: "http://www.gscloud.cn/sources/get_meta_info/"+pid+"/"+dataid,
+            success: function (data) {
+                dialogs.dialog(data, null, null, "400px");
+            },
+            error: function () {
+                dialogs.error("信息加载失败");
+            }
+        });
+    };
+
+    var format_action = function(index, source, column) {
+
+        var adata = source.data[index];
+        var fieldValue = adata[column.id];
+
+        var div = $("<div/>");
+
+        var need_info_btn = true;
+
+        if(!(source["pid"] in charge_datas)){
+            if (adata["dataexists"] == 1) {
+                var dl_a = $("<a title='下载' pid='" + source["pid"] + "' dataid='" + adata["dataid"] + "' href='javascript:void(0);'/>");
+                dl_a.append('<span style="font-size: 20px;" class="glyphicon glyphicon-download"></span>');
+                dl_a.click(function(e) {
+                    e.stopPropagation();
+                    //打开一个新窗口
+                    window.open("http://www.gscloud.cn/sources/download/"
+                        + $(this).attr("pid") + "/" + $(this).attr("dataid")
+                        + "/bj");
+                });
+
+                if($.inArray(source["pid"], [411,241,242,243,244,245])>-1){
+                    var info_btn = $("<a/>", {
+                        "href": "javascript:void(0)",
+                        "onclick": "javascript:show_landsat_info("+$.toJSON(adata)+")",
+                        "html": '<span title="详细信息" style="font-size: 20px;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>'
+                    });
+
+                    div.append(info_btn);
+                    div.append("&nbsp;");
+                    need_info_btn = false;
+                }
+
+            }else{
+                var dl_a = $("<a title='没有数据，请预订后下载' pid='" + source["pid"] + "' dataid='" + adata["dataid"] + "' href='javascript:void(0);'/>");
+                dl_a.append('<span style="font-size: 20px;color: #B9B9B9" class="glyphicon glyphicon-download"></span>');
+                dl_a.click(function(e) {
+                    e.stopPropagation();
+                });
+            }
+            div.append(dl_a);
+            div.append("&nbsp;");
+
+            var cart_a = $(
+                "<a pid='" + source["pid"] + "' dataid='" + adata["id"]
+                + "' title='收藏数据' href='javascript:void(0);'/>")
+                .append(
+                    '<span style="font-size: 20px;" class="glyphicon glyphicon-shopping-cart"></span>');
+
+            cart_a.click(function(e) {
+                e.stopPropagation();
+                addtoDataCart($(this).attr("pid"), [ $(this).attr("dataid") ]);
+            });
+
+            div.append(cart_a);
+        }else{
+            var cart_a = $(
+                "<a pid='" + source["pid"] + "' dataid='" + adata["id"]
+                + "' title='收藏数据' href='javascript:void(0);'/>")
+                .append(
+                    '<span style="font-size: 20px;" class="glyphicon glyphicon-shopping-cart"></span>');
+
+            cart_a.click(function(e) {
+                e.stopPropagation();
+                dialogs.confirm("<div id='contact-admin-cfm'>该数据为商业数据，请联系管理员(<a href='javascript:void(0)'>data@cnic.cn/010-58812534</a>)预定，谢谢！</div>");
+                $("#contact-admin-cfm").parent().css("min-height", "50px");
+            });
+
+            div.append(cart_a);
+        }
+
+        if(need_info_btn){
+            div.prepend("&nbsp;");
+
+            var _btn = $("<a/>", {
+                "href": "javascript:void(0)",
+                "onclick": "javascript:show_meta_info("+source["pid"]+",'"+adata["dataid"]+"')",
+                "html": '<span title="详细信息" style="font-size: 20px;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>'
+            });
+
+            div.prepend(_btn);
+        }
+
+        return div;
+    };
+
+    var max_cart_num = 50;
+
+    var addtoDataCart = function(dataids) {
+        window.location = "http://www.gscloud.cn/accounts/login?next="
+            + encodeURIComponent(window.location);
+    };
+
+
+    var json_display_fields = {
+        "241": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"],
+        "242": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"],
+        "243": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"],
+        "244": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"],
+        "245": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"],
+        "246": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "247": ["id", "dataid", "path", "row", "ct_long", "ct_lat", "dataexists"],
+        "248": ["id", "dataid", "path", "row", "ct_long", "ct_lat", "dataexists"],
+        "254": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "255": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "256": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "257": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "258": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "259": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "260": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "261": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "262": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "267": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "268": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "269": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "270": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "271": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "272": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "273": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "274": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "276": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "277": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"],
+        "278": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "279": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "280": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "281": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "282": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "283": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "284": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "285": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "286": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "287": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "288": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "289": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "290": ["id", "dataid", "path", "row", "datadate", "ct_long", "ct_lat", "dataexists"], "293": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "294": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "295": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "296": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "298": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "299": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "300": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "301": ["id", "dataid", "datatype", "datadate", "ct_long", "ct_lat", "dataexists"], "304": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "305": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "306": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "307": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "308": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "309": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "310": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "311": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "314": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "315": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "316": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "334": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "335": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "336": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "337": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "338": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "339": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "340": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "341": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "342": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "343": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "344": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "345": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "346": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "347": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "348": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "349": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "350": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "351": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "352": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "353": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "354": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "355": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "356": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "357": ["id", "dataid", "platform", "datadate", "ct_long", "ct_lat", "dataexists"], "362": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "363": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "364": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "365": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "411": ["id", "dataid", "satellite", "datatype", "lines", "samples", "sensor", "stationid", "daynight", "path", "row", "datadate", "datadate_year", "datadate_month", "datadate_day", "starttime", "stoptime", "imagequalityvcid1", "imagequalityvcid2", "cloudcover", "cloudcoverupperleft", "cloudcoverupperright", "cloudcoverlowerleft", "cloudcoverlowerright", "sunelevation", "sunazimuth", "filesize", "ct_long", "ct_lat", "lt_long", "lt_lat", "rt_long", "rt_lat", "rb_long", "rb_lat", "lb_long", "lb_lat", "dataexists", "layerexists"], "414": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "415": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "416": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "418": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "419": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "420": ["id", "dataid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "421": ["id", "dataid", "path", "row", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists"], "428": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "430": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "434": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "436": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "437": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "438": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "444": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "445": ["id", "dataid", "path", "row", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "cloudcover", "dataexists"], "447": ["id", "dataid", "uuid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists", "layerexists"],
+        "448": ["id", "dataid", "uuid", "datadate", "lt_long", "lt_lat", "rt_long", "rt_lat", "lb_long", "lb_lat", "rb_long", "rb_lat", "ct_long", "ct_lat", "dataexists", "layerexists"]
+    };
+
+    var field_fmt_id_map = {"241": 241, "242": 241, "243": 241, "244": 241, "245": 241, "246": 246, "247": 248, "248": 248, "254": 256, "255": 256, "256": 256, "257": 256, "258": 256, "259": 256, "260": 256, "261": 256, "262": 256, "267": 256, "268": 256, "269": 256, "270": 256, "271": 256, "272": 256, "273": 256, "274": 256, "276": 256, "277": 256, "278": 256, "279": 256, "280": 256, "281": 256, "282": 256, "283": 256, "284": 256, "285": 256, "286": 256, "287": 256, "288": 256, "289": 256, "290": 256, "293": 293, "294": 293, "295": 293, "296": 293, "298": 293, "299": 293, "300": 293, "301": 293, "304": 304, "305": 304, "306": 304, "307": 304, "308": 304, "309": 304, "310": 304, "311": 304, "314": 314, "315": 314, "316": 314, "334": 334, "335": 334, "336": 334, "337": 334, "338": 334, "339": 334, "340": 334, "341": 334, "342": 334, "343": 334, "344": 334, "345": 334, "346": 334, "347": 334, "348": 334, "349": 334, "350": 334, "351": 334, "352": 334, "353": 334, "354": 334, "355": 334, "356": 334, "357": 334, "362": 362, "363": 362, "364": 362, "365": 362, "411": 241, "414": 416, "415": 416, "416": 416, "418": 416, "419": 416, "420": 416, "421": 304, "428": 434, "430": 434, "434": 434, "436": 434, "437": 434, "438": 434, "444": 434, "445": 434, "447": 448, "448": 448};
+
+    var productid_img_table  = {"241": "metadata_landsat", "242": "metadata_landsat", "243": "metadata_landsat", "244": "metadata_landsat", "245": "metadata_landsat", "246": "landsat_water", "247": "mosaic_metadata", "248": "mosaic_metadata_8497", "254": "metadata_modis", "255": "metadata_modis", "256": "metadata_modis", "257": "metadata_modis", "258": "metadata_modis", "259": "metadata_modis", "260": "metadata_modis", "261": "metadata_modis", "262": "metadata_modis", "267": "metadata_modis", "268": "metadata_modis", "269": "metadata_modis", "270": "metadata_modis", "271": "metadata_modis", "272": "metadata_modis", "273": "metadata_modis", "274": "metadata_modis", "276": "metadata_modis", "277": "metadata_modis", "278": "metadata_modis", "279": "metadata_modis", "280": "metadata_modis", "281": "metadata_modis", "282": "metadata_modis", "283": "metadata_modis", "284": "metadata_modis", "285": "metadata_modis", "286": "metadata_modis", "287": "metadata_modis", "288": "metadata_modis", "289": "metadata_modis", "290": "metadata_modis", "293": "modis_l1b_MOD021KM", "294": "modis_l1b_MOD02HKM", "295": "modis_l1b_MOD02QKM", "296": "modis_l1b_MOD03", "298": "modis_l1b_MYD021KM", "299": "modis_l1b_MYD02HKM", "300": "modis_l1b_MYD02QKM", "301": "modis_l1b_MYD03", "304": null, "305": null, "306": null, "307": null, "308": null, "309": null, "310": null, "311": null, "314": null, "315": null, "316": null, "334": "modis_products_cn", "335": "modis_products_cn", "336": "modis_products_cn", "337": "modis_products_cn", "338": "modis_products_cn", "339": "modis_products_cn", "340": "modis_products_cn", "341": "modis_products_cn", "342": "modis_products_cn", "343": "modis_products_cn", "344": "modis_products_cn", "345": "modis_products_cn", "346": "modis_products_cn", "347": "modis_products_cn", "348": "modis_products_cn", "349": "modis_products_cn", "350": "modis_products_cn", "351": "modis_products_cn", "352": "modis_products_cn", "353": "modis_products_cn", "354": "modis_products_cn", "355": "modis_products_cn", "356": "modis_products_cn", "357": "modis_products_cn", "362": "metadata_avhrr_ltdr", "363": "metadata_avhrr_ltdr", "364": "metadata_avhrr_ltdr", "365": "metadata_avhrr_ltdr", "411": "metadata_landsat", "414": "airs_metadata", "415": "airs_metadata", "416": "airs_metadata", "418": "airs_metadata", "419": "airs_metadata", "420": "airs_metadata", "421": null, "428": "metadata_casc", "430": "metadata_casc", "434": "metadata_casc", "436": "metadata_casc", "437": "metadata_casc", "438": "metadata_casc", "444": "metadata_casc", "445": "metadata_casc", "447": "metadata_sentinel1", "448": "metadata_sentinel2"};
+
+    var mapctx = (typeof module === 'undefined') ? (window.mapctx = window.mapctx || {}) : module.exports;
+    mapctx.editor_map = null;
+    mapctx.lt_point = 0;
+    mapctx.lt_line = 1;
+    mapctx.lt_polygon = 2;
+    mapctx.lt_raster = 3;
+    mapctx.projection = 'EPSG:3857';
+    mapctx.wms_url = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    mapctx.tms_url = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    mapctx.landsat_url = "../../../png/{z}/{x}/{y}.jpg";
+    mapctx.mapinfo = null;
+    mapctx.mapdiv = null;
+    mapctx.layers = {};
+    mapctx.layers_obj = {};
+    mapctx.baseLayer = null;
+    mapctx.onAfterInitLayer = {};
+
+    <!-- 绘图功能 -->
+    var has_canvas = ol.has.CANVAS;
+
+
+    $(function() {
+        $(document).on("mapctx_ReInit_Layers", function(e, data) {
+            mapctx.reinit_layers(data);
+        }).on("mapctx_ReInit_Map", function(e, mapdiv, mapinfo) {
+            mapctx.reinit_map(mapdiv, mapinfo);
+        }).on("mapctx_setVisible", function(e, layerid, visible) {
+            mapctx.setVisible(layerid, visible);
+        }).on("mapctx_setBaseLayer", function(e, name) {
+            mapctx.setBaseLayer(mapctx.createBingLayer(name));
+        }).on("mapctx_setZoomRange", function(e, minzoom, maxzoom) {
+            mapctx.setZoomRange(minzoom, maxzoom);
+        });
+    });
+    <!--加载高德地图layer -->
+    mapctx.createGDlayer = function() {
+        return new ol.layer.Tile(
+            {
+                name : "gdtiles",
+                source : new ol.source.XYZ(
+                    {
+                        url : 'http://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_en&size=1&scale=1&style=8&x={x}&y={y}&z={z}'
+                    })
+            });
+    }
+    <!--加载天地图layer -->
+    mapctx.createTDlayer = function() {
+        var layer_img = new ol.layer.Tile(
+            {
+                source : new ol.source.XYZ(
+                    {
+                        crossOrigin : 'anonymous',
+                        url : "http://t{3-6}.tianditu.com/DataServer?T=img_w&x={x}&y={y}&l={z}"
+                    })
+            });
+        var layer_road = new ol.layer.Tile(
+            {
+                source : new ol.source.XYZ(
+                    {
+                        url : "http://t{1-4}.tianditu.com/DataServer?T=vec_w&x={x}&y={y}&l={z}"
+                    })
+            });
+        <!--地名标注图层 -->
+        var layer_label = new ol.layer.Tile(
+            {
+                source : new ol.source.XYZ(
+                    {
+                        url : "http://t{1-4}.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}"
+                    })
+            });
+        return [ layer_label, layer_road, layer_img ];
+    };
+    <!--加载BingMapslayer -->
+    mapctx.createBingLayer = function(name) {
+        return new ol.layer.Tile(
+            {
+                source : new ol.source.BingMaps(
+                    {
+                        culture : "de-de",
+                        key : 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                        imagerySet : name
+                    })
+            });
+    };
+    <!--加载Stamenlayer-->
+    mapctx.createStamenLayer = function() {
+        return new ol.layer.Tile({
+            source : new ol.source.Stamen({
+                layer : 'toner'
+            })
+        });
+    };
+    <!--设置底图 -->
+    mapctx.setBaseLayer = function(baselayer) {
+
+        if (mapctx.editor_map == null)
+            return;
+
+        if (isEmpty(baselayer))
+            return;
+
+        if (mapctx.baseLayer) {
+            mapctx.editor_map.removeLayer(mapctx.baseLayer);
+            mapctx.baseLayer = null;
+        }
+
+        mapctx.baseLayer = baselayer;
+
+        mapctx.insertLayer(0, baselayer);
+    }
+
+    mapctx.transform = function(val) {
+        if (val.length == 2) {
+            return ol.proj.transform(val, 'EPSG:4326', mapctx.projection);
+        }
+        if (val.length == 4) {
+            return ol.extent.applyTransform(val, mapctx.transformer);
+        }
+        return null;
+    }
+
+    <!--将视图缩放级别固定在这个范围内 -->
+
+    mapctx.setZoomRange = function(minzoom, maxzoom) {
+        if (mapctx.editor_map == null)
+            return;
+
+        mapctx.mapinfo.minzoom = minzoom;
+        mapctx.mapinfo.maxzoom = maxzoom;
+
+        <!--将视图缩放级别固定在这个范围内 -->
+        var maxResolution = mapctx.mapSize / 256;
+        var resolutions = [];
+        for (var zoom = minzoom; zoom <= maxzoom; zoom++) {
+            resolutions.push(maxResolution / Math.pow(2, zoom))
+        }
+        var view = mapctx.editor_map.getView();
+
+        mapctx.viewOptions["center"] = view.getCenter();
+        mapctx.viewOptions["zoom"] = view.getZoom();
+        mapctx.viewOptions["resolutions"] = resolutions;
+
+        mapctx.editor_view = new ol.View(mapctx.viewOptions);
+        mapctx.editor_map.setView(mapctx.editor_view);
+    }
+
+
+    <!-- 重新初始化地图对象 -->
+    mapctx.reinit_map = function(mapdiv, mapinfo) {
+
+        this.mapinfo = mapinfo;
+
+        this.layers = {};
+        this.layers_obj = {};
+        this.mapdiv = $("#" + mapdiv);
+
+        this.mapdiv.empty().addClass("smallmap");
+
+        if (!has_canvas) {
+            var msg = "对不起，您的浏览器版本太低，不支持 Canvas 技术，请升级您的浏览器！";
+            dialogs.error(msg);
+            this.mapdiv.html(msg);
+            return;
+        }
+
+        this.transformer = ol.proj.getTransform("EPSG:4326", this.projection);
+
+        this.projectionExtent = ol.proj.get(this.projection).getExtent();
+        this.mapSize = Math.max(
+            this.projectionExtent[2] - this.projectionExtent[0],
+            this.projectionExtent[3] - this.projectionExtent[1]);
+        var layers = [];
+
+        var zoom = this.mapinfo.zoom - this.mapinfo.minzoom;
+        this.viewOptions = {
+            center : this
+                .transform([ this.mapinfo.center_x, this.mapinfo.center_y ]),
+            zoom : (zoom < 0) ? 0 : zoom,
+            projection : this.projection
+        };
+
+        // ---- 将视图范围固定在这个区域内 -------
+
+        this.viewOptions["extent"] = "extent" in mapinfo ? mapctx
+            .transform(mapinfo["extent"]) : this.projectionExtent;
+
+        // ---- 将视图缩放级别固定在这个范围内 -------
+
+        var maxResolution = this.mapSize / 256;
+        var resolutions = [];
+        for (var zoom = this.mapinfo["minzoom"]; zoom <= this.mapinfo["maxzoom"]; zoom++) {
+            resolutions.push(maxResolution / Math.pow(2, zoom))
+        }
+
+        this.viewOptions["resolutions"] = resolutions;
+        // ---- 将视图缩放级别固定在这个范围内 -------
+
+        this.controls = [];
+
+        var scale_target = get_dict_value(mapinfo, "scale_target");
+        if (scale_target != "") {
+            var scale_opts = {};
+            if (scale_target != null) {
+                scale_opts["target"] = scale_target;
+            }
+            this.controls.push(new ol.control.ScaleLine(scale_opts));
+        }
+
+        var mouse_target = get_dict_value(mapinfo, "mouse_target");
+        if (mouse_target != "") {
+            var mouse_opts = {
+                coordinateFormat : ol.coordinate.createStringXY(4),
+                projection : 'EPSG:4326',
+                undefinedHTML : "未知"
+            };
+            if (mouse_target != null) {
+                mouse_opts["target"] = mouse_target;
+            }
+            this.controls.push(new ol.control.MousePosition(mouse_opts));
+        }
+
+        var zoom_target = get_dict_value(mapinfo, "zoom_target");
+        if (zoom_target != "") {
+            var zoom_opts = {};
+            if (zoom_target != null) {
+                zoom_opts["target"] = zoom_target;
+            }
+            this.controls.push(new ol.control.Zoom(zoom_opts));
+        }
+
+        var rotate_opts = {
+            "tipLabel" : "复原"
+        };
+        this.controls.push(new ol.control.Rotate(rotate_opts));
+
+        this.editor_view = new ol.View(this.viewOptions);
+        this.interactions = ol.interaction.defaults().extend(
+            [ new ol.interaction.DragRotateAndZoom() ]);
+
+        $(document).trigger("mapctx_BeforeInitMap", [ this ]);
+
+        mapctx.editor_map = new ol.Map({
+            controls : this.controls,
+            loadTilesWhileAnimating : true,
+            interactions : this.interactions,
+            renderer : "canvas",
+            target : this.mapdiv.get(0),
+            layers : layers,
+            view : this.editor_view
+        });
+        var baselayer = get_dict_value(mapinfo, "baselayer");
+        if (baselayer != null) {
+            this.setBaseLayer(this.createBingLayer(baselayer));
+        }
+
+        $(document).trigger("mapctx_AfterInitMap", [ this, this.editor_map ]);
+    };
+
+    <!--添加 wms 图层 -->
+    mapctx.add_layers = function(layers) {
+        if (mapctx.editor_map == null)
+            return;
+
+        for (var i = layers.length - 1; i >= 0; i--) {
+            if (layers[i].layertype >= 0) {
+                mapctx.reinit_layer(layers[i]);
+            }
+        }
+    };
+    <!--删除 wms 图层对象 -->
+    mapctx.removeLayer = function(layerid) {
+        if (mapctx.editor_map == null)
+            return;
+
+        var olayer = mapctx.getLayer(layerid);
+        if (olayer) {
+            mapctx.editor_map.removeLayer(olayer);
+
+            mapctx.layers[layerid] = null;
+            delete mapctx.layers[layerid];
+
+            mapctx.layers_obj[layerid] = null;
+            delete mapctx.layers_obj[layerid];
+        }
+    };
+    <!--显示图层 -->
+    mapctx.show_layer = function(layerinfo) {
+        if (mapctx.editor_map == null) {
+            return;
+        }
+
+        var olayer = mapctx.getLayer(layerinfo.layerid);
+
+        if (olayer == null) {
+            var tiletype = get_dict_value(layerinfo, "tiletype", "");
+            if (tiletype == "") {
+                layerinfo["tiletype"] = get_dict_value(mapctx.mapinfo, "tiletype",
+                    "wms");
+            }
+            olayer = mapctx.createLayer(layerinfo);
+            var layers = mapctx.editor_map.getLayerGroup().getLayers();
+            var pos = layers.getLength();
+            for ( var layerid in mapctx.layers_obj) {
+                var order = mapctx.layers_obj[layerid].layerorder;
+                if (layerinfo.layerorder > order) {
+                    pos = pos - 1;
+                }
+            }
+            mapctx.insertLayer(pos, olayer);
+            mapctx.layers[layerinfo.layerid] = olayer;
+            mapctx.layers_obj[layerinfo.layerid] = layerinfo;
+        } else {
+            olayer.setVisible(true);
+        }
+        mapctx.zoom_to_bbox(layerinfo.bbox);
+
+    };
+    <!--重新加载 wms 图层对象 -->
+    mapctx.reinit_layer = function(layer) {
+        if (mapctx.editor_map == null)
+            return;
+
+        mapctx.removeLayer(layer.layerid);
+
+        var tiletype = get_dict_value(layer, "tiletype", "");
+        if (tiletype == "") {
+            layer["tiletype"] = get_dict_value(mapctx.mapinfo, "tiletype", "wms");
+        }
+
+        var olayer = mapctx.createLayer(layer);
+
+        mapctx.insertLayer(-1, olayer);
+
+        mapctx.layers[layer.layerid] = olayer;
+        mapctx.layers_obj[layer.layerid] = layer;
+    };
+    <!--layer:{dataid:"",bands:"5,4,3"} -->
+    mapctx.reinit_landsat_layer = function(layer, callbacks) {
+        if (mapctx.editor_map == null)
+            return;
+
+        mapctx.removeLayer(layer.dataid);
+
+        var olayer = mapctx.create_landsat_layer(layer, callbacks);
+
+        mapctx.insertLayer(-1, olayer);
+
+        mapctx.layers[layer.dataid] = olayer;
+        mapctx.layers_obj[layer.dataid] = layer;
+    };
+
+    mapctx.create_landsat_layer = function(layerinfo, callbacks) {
+
+        var source = new ol.source.XYZ({
+            "url" :
+                mapctx.landsat_url.replace("{dataid}", layerinfo.dataid).replace("{bands}", layerinfo.bands)
+        });
+
+        source.on('tileloadstart', function(event) {
+            mapctx.progress.addLoading();
+        });
+
+        source.on('tileloadend', function(event) {
+            mapctx.progress.addLoaded();
+        });
+
+        source.on('tileloaderror', function(event) {
+            mapctx.progress.addLoaded();
+        });
+
+        if(typeof(callbacks) != "undefined"){
+            if("start" in callbacks){
+                source.on('tileloadstart', callbacks["start"]);
+            }
+            if("loaded" in callbacks){
+                source.on('tileloadend', callbacks["loaded"]);
+            }
+            if("error" in callbacks){
+                source.on('tileloaderror', callbacks["error"]);
+            }
+        }
+
+        var layer_opts = {
+            source : source,
+            preload : 4,
+            visible : true
+        };
+
+        return new ol.layer.Tile(layer_opts);
+    };
+
+    <!--重新加载图层对象列表 -->
+    mapctx.reinit_layers = function(layers) {
+        if (mapctx.editor_map == null)
+            return;
+        mapctx.editor_map.getLayers().clear();
+        mapctx.layers = {};
+        mapctx.layers_obj = {};
+
+        mapctx.setBaseLayer(mapctx.baseLayer);
+
+        for (var i = layers.length - 1; i >= 0; i--) {
+            if (layers[i].layertype >= 0) {
+                mapctx.reinit_layer(layers[i]);
+            }
+        }
+
+        $(document).trigger("mapctx_AfterInitLayer",
+            [ this, mapctx.editor_map, layers ]);
+
+        for ( var key in mapctx.onAfterInitLayer) {
+            var fun = mapctx.onAfterInitLayer[key];
+            if (isArray(fun)) {
+                for (var i = 0; i < fun.length; i++) {
+                    fun[i](layers);
+                }
+            } else if (isFunction(fun)) {
+                fun(layers);
+            }
+        }
+    };
+
+    mapctx.createLayer = function(layerinfo) {
+        var tiletype = get_dict_value(layerinfo, "tiletype", "wms");
+
+        var getSource = function() {
+            if (tiletype == "wms") {
+                return new ol.source.TileWMS({
+                    'url' : mapctx.wms_url,
+                    'params' : {
+                        'LAYERS' : layerinfo.layerid,
+                        'TILED' : true,
+                        "FORMAT" : 'image/png'
+                    }
+                });
+            } else if (tiletype == "tms") {
+                return new ol.source.XYZ({
+                    "url" : mapctx.tms_url.replace("{layerid}", layerinfo.layerid)
+                });
+            }
+        };
+
+        var layer_opts = {
+            source : getSource(),
+            preload : 4,
+            visible : layerinfo.visible > 0
+        };
+
+        return new ol.layer.Tile(layer_opts);
+    };
+
+    <!--重新加载wms图层的数据 -->
+    mapctx.reload_layer = function(layerid, layerprops) {
+        var olayer = mapctx.getLayer(layerid);
+
+        if (olayer != null) {
+            var source = olayer.getSource();
+            source.updateParams({
+                rand : new Date().valueOf()
+            });
+        }
+    };
+    <!--获取 wmslayer 对象 -->
+    mapctx.getLayer = function(layerid) {
+        if (mapctx.layers.hasOwnProperty(layerid)) {
+            return mapctx.layers[layerid];
+        }
+        return null;
+    };
+
+    mapctx.insertLayer = function(index, layer) {
+        var layers = mapctx.editor_map.getLayerGroup().getLayers();
+        if (index < 0) {
+            layers.push(layer);
+        } else {
+            layers.insertAt(index, layer);
+        }
+    };
+    <!--返回当前视图范围的中心点 -->
+    mapctx.getCenter = function(proj) {
+        if (mapctx.editor_map == null)
+            return;
+
+        var pt = mapctx.editor_map.getView().getCenter();
+
+        if (isString(proj)) {
+            pt = ol.proj.transform(pt, mapctx.projection, proj);
+        }
+        return pt;
+    };
+    <!--返回当前缩放级别 -->
+    mapctx.getZoom = function() {
+        if (mapctx.editor_map == null)
+            return;
+
+        var view = mapctx.editor_map.getView();
+
+        return view.getZoom() + mapctx.mapinfo.minzoom;
+    };
+    <!--获取当前视图的坐标范围 -->
+    mapctx.getViewExtent = function(proj) {
+        if (mapctx.editor_map == null)
+            return;
+
+        var vp = mapctx.editor_map.getViewport();
+
+        var pt0 = mapctx.editor_map.getCoordinateFromPixel([ 0, vp.offsetHeight ]);
+        var pt1 = mapctx.editor_map.getCoordinateFromPixel([ vp.offsetWidth, 0 ]);
+
+        var rect = [ pt0[0], pt0[1], pt1[0], pt1[1] ];
+
+        if (isString(proj)) {
+            var transformer = ol.proj.getTransform(ol.proj.get(mapctx.projection),
+                ol.proj.get(proj));
+            rect = ol.extent.applyTransform(val, transformer);
+        }
+        return rect;
+
+    };
+    <!--获取当前视图大小 -->
+    mapctx.getViewSize = function() {
+        if (mapctx.editor_map == null)
+            return;
+        var vp = mapctx.editor_map.getViewport();
+
+        return [ vp.offsetWidth, vp.offsetHeight ];
+    };
+    <!--设置 ol 的 layer 可视与否 -->
+    mapctx.setVisible = function(layerid, visible) {
+        var olayer = mapctx.getLayer(layerid);
+        if (olayer) {
+            olayer.setVisible(visible);
+        }
+    };
+    <!--更新图层顺序 -->
+    mapctx.update_zIndex = function(data) {
+        if (mapctx.editor_map == null)
+            return;
+        var layerids = [];
+        for ( var layerid in data) {
+            layerids.push(layerid);
+        }
+
+        mapctx.editor_map.getLayers().clear();
+
+        mapctx.setBaseLayer(mapctx.baseLayer);
+
+        for (var i = layerids.length - 1; i >= 0; i--) {
+            var olayer = mapctx.getLayer(layerids[i]);
+            if (olayer) {
+                mapctx.insertLayer(-1, olayer);
+            }
+        }
+    };
+    <!--缩放到当前空间范围 -->
+    mapctx.zoom_to_bbox = function(epsg4326Extent) {
+        if (mapctx.editor_map == null)
+            return;
+        var extent = mapctx.transform(epsg4326Extent);
+        var view = mapctx.editor_map.getView();
+        view.fit(extent, mapctx.editor_map.getSize());
+    };
+    <!--缩放地图到整个图层范围 -->
+    mapctx.zoom_to_whole = function() {
+        var extent = null;
+        for ( var key in mapctx.layers_obj) {
+            var layer = mapctx.layers_obj[key];
+            if (extent == null) {
+                extent = [ layer.bbox[0], layer.bbox[1], layer.bbox[2],
+                    layer.bbox[3] ];
+            } else {
+                extent = ol.extent.extend(extent, layer.bbox);
+            }
+        }
+        if (extent) {
+            mapctx.zoom_to_bbox(extent);
+        }
+    };
+
+    function TileLoadProgress(el) {
+        this.el = el;
+        this.loading = 0;
+        this.loaded = 0;
+    }
+    TileLoadProgress.prototype.addLoading = function() {
+        if (this.loading === 0) {
+            this.show();
+        }
+        ++this.loading;
+        this.update();
+    };
+    TileLoadProgress.prototype.addLoaded = function() {
+        var this_ = this;
+        setTimeout(function() {
+            ++this_.loaded;
+            this_.update();
+        }, 100);
+    };
+    TileLoadProgress.prototype.update = function() {
+        var width = (this.loaded / this.loading * 100).toFixed(1) + '%';
+        this.el.style.width = width;
+        if (this.loading === this.loaded) {
+            this.loading = 0;
+            this.loaded = 0;
+            var this_ = this;
+            setTimeout(function() {
+                this_.hide();
+            }, 500);
+        }
+    };
+    TileLoadProgress.prototype.show = function() {
+        this.el.style.visibility = 'visible';
+    };
+    TileLoadProgress.prototype.hide = function() {
+        if (this.loading === this.loaded) {
+            this.el.style.visibility = 'hidden';
+            this.el.style.width = 0;
+        }
+    };
+
+    var GSON = {
+        base_number : 10000.0,
+        base_offset : 64,
+        decode_a_line : function(coordinate, encodeOffsets) {
+            var result = [];
+
+            var prevX = encodeOffsets[0]
+            var prevY = encodeOffsets[1]
+
+            var l = coordinate.length;
+            var i = 0;
+            while (i < l) {
+                var x = coordinate.charCodeAt(i) - this.base_offset
+                var y = coordinate.charCodeAt(i + 1) - this.base_offset
+                i += 2;
+
+                x = (x >> 1) ^ (-(x & 1));
+                y = (y >> 1) ^ (-(y & 1));
+
+                x += prevX;
+                y += prevY;
+
+                prevX = x;
+                prevY = y;
+
+                result.push([ x / this.base_number, y / this.base_number ])
+            }
+            return result;
+        }
+    };
+
+    var CS = function() {
+        this.inited = false;
+        this.dataids = [];
+        this.colums = {};
+        this.params = {};
+        this.filterSet = [];
+        this.beg = null;
+        this.end = null;
+        this.trigger = true;
+        this.productid = null;
+        this.datatype = null;
+    };
+    CS.prototype.setFilterSet = function() {
+
+        this.filterSet = [];
+
+        <!--数据标识 -->
+        var dataid = $("#snd-search-panel input[name='dataid']").val();
+        if(dataid && dataid.length > 0){
+            this.filterSet.push({
+                id: "dataid",
+                value: dataid
+            });
+        }
+        <!--日期 -->
+        var begdate = $("#snd-search-panel input[name='begdate']").val();
+        var enddate = $("#snd-search-panel input[name='enddate']").val();
+        if(begdate && enddate && begdate.length > 0 && enddate.length > 0){
+            this.filterSet.push({
+                id: "datadate",
+                value: begdate+","+enddate
+            });
+        }
+    };
+    <!--未选择数据集-->
+    CS.prototype.getResult = function(params) {
+        this.params = params;
+
+        if (!this.productid) {
+            dialogs.error("未选择数据集!");
+            return;
+        }
+
+        <!--如果检索条件为空，则不进行检索 -->
+        if (($.isEmptyObject(this.params) && this.filterSet.length == 0)) {
+            return; }
+        <!--如果检索条件存在，进行检索 -->
+        if (this.inited) {
+            $("#result-listview").datalistview("reload");
+        } else {
+            _int_search_listview(this);
+        }
+    };
+    <!--检索并生成结果列表 -->
+    var _int_search_listview = function(cs) {
+        var _columns = [{
+            "id" : "id",
+            "title" : '数据信息',
+            "formatter" : function(index, source, column) {
+                var data = source.data[index];
+                data["tableName"] = productid_img_table[cs.productid];
+                <!--根据传入的数据生成对应的html -->
+                var html = baidu.template("search-field-fmt-"+field_fmt_id_map[cs.productid], data);
+                return html;
+            }
+        },{
+            "id" : "id",
+            "title" : '操作',
+            "width" : 80,
+            "align" : "center",
+            "formatter" : bands_format_action
+        }];
+
+        var opts = {
+            useHash : true,
+            header : false,
+            multi : true,
+            pagination : {
+                pageDiv : "#pager",
+                pageInfo : "#info",
+
+                pageList : [ 10, 20, 40, 60 ],
+
+                pageSize : 10,
+                pageNumber : 1
+            },
+            rowCount : null,
+
+            sortSet : [ {
+                "id" : "datadate",
+                "sort" : "desc"
+            } ],
+
+            multiSort : false,
+
+            columns : _columns,
+
+            methods : {
+                onSelected : function(selected) {
+                    if(cs.trigger){
+                        var seled = selectSingleClick.getFeatures();
+                        seled.clear();
+                        var len = selected.length;
+                        if(len>0){
+                            var dataids = $.map(selected, function(data){
+                                return data.id;
+                            });
+                            var DR = getDataRange(mapctx.editor_map);
+                            var features = DR.getOutlines(cs.productid, dataids);
+                            $.each(features, function(idx, feature){
+                                seled.push(feature);
+                            });
+                        }
+                    }
+                    cs.trigger = true;
+                }
+            },
+            source : function(data) {
+
+                if(cs.filterSet.length > 0){
+                    data["filterSet"] = cs.filterSet;
+                }
+
+                var param = $.toJSON(data);
+
+                $.ajax({
+                    url : "/retrieve/query",
+                    data : JSON.stringify(
+                        $.toJSON(cs.params)
+                    ),
+                    dataType : "json",
+                    contentType:"application/json;charset=utf-8",
+                    type: "post",
+                    success : function(data) {
+                        //alert(JSON.stringify(data));
+                        for(var i=0;i<data.polygonData.length;i++){
+                            // alert(JSON.parse(data.jsonArray)[i].entityId);
+
+
+                            // for(var i=0;i<list.length;i++){
+                            //     alert(list(0))
+                            // }
+                            // var obj = eval(data);
+                            // $(obj).each(function (index) {
+                            //    alter(index)
+                            // var val = new Map();
+                            // $("#pager").append("<div class='show'>" + JSON.parse(data.jsonArray)[i].entityId+ "</div>");
+                            $("#pager").append("<div>" +
+                                // "<div>" +
+                                // "<img width='100px' src='/image/"+JSON.parse(data.jsonArray)[i].sceneId+".jpg'>" +
+                                // "</div>" +
+                                "<div>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td >EntityId：</td>" +
+                                "<td >"+ data.polygonData[i].sceneId+"</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td >Path：</td>" +
+                                "<td>"+data.polygonData[i].path+"</td>" +
+                                "<td>Row：</td>" +
+                                "<td>"+data.polygonData[i].row+"</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td>Point1：</td>" +
+                                "<td>"+data.polygonData[i].llPoint+"</td>" +
+                                "<td>Point2：</td>" +
+                                "<td>"+data.polygonData[i].lrPoint+"</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td>Point3：</td>" +
+                                "<td>"+data.polygonData[i].urPoint+"</td>" +
+                                "<td>Point4：</td>" +
+                                "<td>"+data.polygonData[i].ulPoint+"</td>" +
+                                "</tr>" +
+                                " </table>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td>DateAcquired：</td>" +
+                                "<td>"+data.polygonData[i].acquiredTime+"</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td >Exist：</td>" +
+                                "<td>true</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                /*"<table style='width:100%'>" +
+                                "<tr>" +
+                                "<td >location：</td>" +
+                                /!*"<td><img alt=\"\" src="\data.jsonArray[i].location\"/>+</td>" +*!/
+                                "<td><img alt='' src='data.jsonArray[i].location'/></td>" +
+                                "</tr>" +
+                                "</table>" +*/
+                                "</div>")
+
+                            // });
+
+
+                            // cs.beg = data.offset;
+                            // cs.end = data.offset + data.pageSize;
+                            // cs.dataids = $.map(data.data, function(x){return x.id});
+                            //
+                            $("#result-panel").show();
+                            // $("#result-listview").datalistview("setSource", [ data ]);
+                            // $("#result-listview").datalistview("loading", [ false ]);
+                            // cs.inited = true;
+                            //
+                            // var DR = getDataRange(mapctx.editor_map);
+                            // DR.clear();
+                            //
+                            // if(cs.dataids.length == 0){
+                            // 	return;
+                            // }
+                            //
+                            // DR.showOutlines(cs.productid, cs.dataids, function(){
+                            // 	var datas = $("#result-listview").datalistview("selected");
+                            // 	if(datas.length > 0){
+                            // 		var dataids = $.map(datas, function(data){
+                            // 			return data.id;
+                            // 		});
+                            // 		var DR = getDataRange(mapctx.editor_map);
+                            // 		var features = DR.getOutlines(cs.productid, dataids);
+                            // 		var selected = selectSingleClick.getFeatures();
+                            // 		$.each(features, function(idx, feature){
+                            // 			selected.push(feature);
+                            // 		});
+                            // 	}
+                            // });
+                            //
+                            // $("#result-listview>div").css({
+                            // 	"max-height" : "305px",
+                            // 	"overflow-y" : "auto"
+                            // });
+                            // if(cur_band_index != null && cur_band_index >= cs.beg && cur_band_index < cs.end){
+                            // 	$("#show_img_btn_"+cur_band_index).trigger("click");
+                            // }
+                            //
+                            // 查看缩略图
+                            $(".cbx-images").colorbox({
+                                innerWidth: "600px"
+                            });
+                            // $.each(data, function (k, v) {
+                            //     alert(k + ":" + v);
+                            // });
+                        }
+
+                    },
+                    error : function(xhr, code, what) {
+                        $("#result-listview").datalistview("loading", [ false ]);
+                        if(xhr.status == 404){
+                            $("#empty-result-panel").show();
+                        }
+                    }
+
+                });
+            }
+
+        };
+
+        $("#result-listview").datalistview(opts);
+
+        // alert("here we go");
+        return 0;
+    };
+
+    var cs = new CS();
+    $(function() {
+        $('#sdate-input,#edate-input').datepicker({
+            language: "zh-CN",
+            format : 'yyyy-mm-dd',
+            setStartDate : '2000-01-01',
+            autoclose : true,
+            minView : 2,
+            forceParse : 1
+        }).blur(function() {
+            var tdate = $(this).val();
+            if (tdate.length == 0) {
+                return;
+            }
+
+            var t = /^\d{4}-\d{2}-\d{2}$/.test(tdate);
+            if (!t) {
+                $(this).addClass("input-error");
+            }
+
+        }).focus(function() {
+            $(this).removeClass("input-error");
+        }).change(function() {
+            var tdate = $(this).val();
+            if (tdate.length == 0) {
+                $(this).removeClass("input-error");
+                return;
+            }
+
+            var t = /^\d{4}-\d{2}-\d{2}$/.test(tdate);
+            if (!t) {
+                $(this).addClass("input-error");
+            }
+            $(this).removeClass("input-error");
+        });
+
+        $("#result-panel").html($("#result-panel-template").html());
+
+        // 隐藏搜索界面
+        $(".data-hide-btn").on("click", function() {
+            $("#main-panel").hide();
+            $(this).hide();
+            $(".data-show-btn").show();
+        });
+
+        // 显示搜索界面
+        $(".data-show-btn").on("click", function() {
+            $(this).hide();
+            $(".data-hide-btn").show();
+            $("#main-panel").show();
+        });
+
+        var path="ndvi";
+        var x=9;
+        var y=422;
+        var z=194;
+        var separate = "/";
+        var layers = "4,5";
+        var polygonStr = '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[432585,4516893],[432585,4595265],[620905,4595265],[620905,4516893],[432585,4516893]]]}}';
+        var tmsParams = {};
+        tmsParams["path"] = path;
+        tmsParams["x"] = x;
+        tmsParams["y"] = y;
+        tmsParams["z"] = z;
+        tmsParams["layers"] = layers;
+        tmsParams["polygonStr"] = polygonStr;
+        var tmsJson = JSON.stringify(tmsParams);
+        var composite_onclick = function(){
+            $.ajax({
+                url : "/tmsServer" + separate + path + separate + x + separate + y + separate + z,
+                data : tmsJson,
+                dataType : "json",
+                contentType:"application/json;charset=utf-8",
+                type: "post",
+                success : function(data) {
+                    alert(JSON.stringify(data));
+                },
+                error : function(xhr, code, what) {
+                    alert("error");
+                    $("#result-listview").datalistview("loading", [ false ]);
+                    if(xhr.status == 404){
+                        $("#empty-result-panel").show();
+                    }
+                }
+
+            });
+        }
+
+        var proParams = {};
+        var bandsList = [4, 5];
+        var cellSize = 30;
+        var selectMethod = "ndvi";
+        var numPartitions = 100
+        var polygonStr = '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[432585,4516893],[432585,4595265],[620905,4595265],[620905,4516893],[432585,4516893]]]}}';
+        proParams["bandsList"] = bandsList;
+        proParams["cellSize"] = cellSize;
+        proParams["selectMethod"] = selectMethod;
+        proParams["numPartitions"] = numPartitions;
+        proParams["polygonStr"] = polygonStr;
+        var proJson = JSON.stringify(proParams);
+        var pro_composite_onclick = function () {
+            $.ajax({
+                url : "/proComposite",
+                data : proJson,
+                dataType : "json",
+                contentType:"application/json;charset=utf-8",
+                type: "post",
+                success : function(data) {
+                    alert(JSON.stringify(data));
+
+                },
+                error : function(xhr, code, what) {
+                    $("#result-listview").datalistview("loading", [ false ]);
+                    if(xhr.status == 404){
+                        $("#empty-result-panel").show();
+                    }
+                }
+
+            });
+        }
+
+        //搜索功能
+        var search_onclick = function() {
+            $("#empty-result-panel").hide();
+
+            if ($("#show_outline_btn").is(":checked")) {
+                $("#show_outline_btn").trigger("click");
+            }
+
+            reset_band_panel();
+
+            if ($(".search-input").hasClass("input-error")) {
+                return;
+            }
+
+            if (cs.inited) {
+                $("#result-panel").html($("#result-panel-template").html());
+                cs.inited = false;
+            }
+
+            var params = {};
+
+            var sdate = $("#sdate-input").val();
+            var edate = $("#edate-input").val();
+            var t1 = /^\d{4}-\d{2}-\d{2}$/.test(sdate);
+            var t2 = /^\d{4}-\d{2}-\d{2}$/.test(edate);
+
+            if (t1 && t2) {
+                params["sdate"] = sdate;
+                params["edate"] = edate;
+            }
+
+            if (!t1 && t2) {
+                $("#sdate-input").addClass("input-error");
+            }
+
+            if (t1 && !t2) {
+                $("#edate-input").addClass("input-error");
+            }
+
+            if ($("#sdate-input,#edate-input").hasClass("input-error")) {
+                return;
+            }
+
+
+            var GM = getGeoManager();
+            var geom_params = GM.getQueryArgs();
+            if (geom_params != null) {
+                for ( var key in geom_params) {
+                    params[key] = geom_params[key];
+                }
+            }
+            cs.getResult(params);
+        };
+
+        // 开始搜索
+        $("#search-btn").on("click", search_onclick);
+        $("#visual-composite-btn").on("click", composite_onclick);
+        $("#pro-composite-btn").on("click", pro_composite_onclick);
+
+        // 重置
+        $("#reset-search-btn").on("click", function() {
+            $("#dataset-name").html("点击选择数据类型");
+
+            cs.productid = null;
+            cs.datatype = null;
+
+            cs.dataids = [];
+            cs.filterSet = [];
+
+            if ($("#show_outline_btn").is(":checked")) {
+                $("#show_outline_btn").trigger("click");
+            }
+
+            reset_band_panel();
+            var GM = getGeoManager();
+            GM.reset();
+
+            selectSingleClick.getFeatures().clear();
+
+            var DR = getDataRange(mapctx.editor_map);
+            DR.clear();
+
+            if (cs.inited) {
+                $("#result-panel").html($("#result-panel-template").html());
+                cs.inited = false;
+            }
+
+            $(".search-input.input-error").removeClass("input-error");
+
+            $("#sdate-input,#edate-input").val("").prop("disabled", false);
+
+            $("#result-panel,#empty-result-panel").hide();
+        });
+
+        var GM = getGeoManager();
+
+        $(".geometry-tab").on("click", function() {
+
+            $(".geometry-tab,.tipbox").removeClass("active");
+            $(this).addClass("active");
+            $(this).next(".tipbox").addClass("active");
+
+            $(".sel-option").removeClass("active");
+            var target = $(this).attr("for");
+            $(target).addClass("active");
+
+        });
+
+
+        $(".mapsel").on("click", function() {
+            GM.setCur(MapSelManager);
+        });
+
+
+
+
+
+        $(".ms-gray-btn").on("click", function() {
+
+            var MS = getMapSel();
+
+            $(".ms-gray-btn").addClass("active");
+            $(".ms-active-btn").removeClass("active");
+            $(this).removeClass("active");
+            $(this).siblings(".ms-active-btn").addClass("active");
+        });
+
+        $(".ms-active-btn").on("click", function() {
+
+            var MS = getMapSel();
+
+            $(".ms-gray-btn").addClass("active");
+            $(".ms-active-btn").removeClass("active");
+            MS.remove_draw();
+        });
+
+        // 点选
+        $("#point-sel-icon .ms-gray-btn").on("click", function() {
+
+            var MS = getMapSel();
+
+            MS.draw_point(function() {
+                $(".ms-active-btn").trigger("click");
+            });
+        });
+
+        // 框选
+        $("#rect-sel-icon .ms-gray-btn").on("click", function() {
+
+            var MS = getMapSel();
+
+            MS.draw_box(function() {
+                $(".ms-active-btn").trigger("click");
+            });
+        });
+
+        // 多边形选择
+        $("#poly-sel-icon .ms-gray-btn").on("click", function() {
+
+            var MS = getMapSel();
+
+            MS.draw_pyn(function() {
+                $(".ms-active-btn").trigger("click");
+            });
+        });
+
+        $(".prow-input").blur(function() {
+            var val = parseInt($(this).val());
+            if (isNaN(val)) {
+                $(this).addClass("input-error");
+            } else {
+                $(this).removeClass("input-error");
+            }
+        });
+
+
+    });
+
+
+    // 基于ol3的区域选择
+    var createGeoms = function(map) {
+        var map = map;
+        var pyn_source = new ol.source.Vector();
+        var pyn_layer = new ol.layer.Vector({
+            source : pyn_source,
+            style : new ol.style.Style({
+                stroke : new ol.style.Stroke({
+                    color : 'red',
+                    width : 1
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        });
+        map.addLayer(pyn_layer);
+
+        // 画多边形控件
+        var pyn_draw = new ol.interaction.Draw({
+            source : pyn_source,
+            type : "Polygon"
+        });
+
+        // 圈选放大(只能放大不能缩小)
+        var drag_zoom = new ol.interaction.DragZoom({
+            condition: ol.events.condition.always,
+            style: new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'blue'
+                })
+            })
+        });
+
+        // 矩形选择框
+        var dragbox = new ol.interaction.DragBox({
+            condition : ol.events.condition.always,
+            style : new ol.style.Style({
+                stroke : new ol.style.Stroke({
+                    color : 'blue'
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        });
+
+        // 事件注册表对象
+        var registry = {};
+
+        return {
+                // 事件注册
+                on: function(type, method, parameters){
+                    var handler = {
+                        method: method,
+                        parameters: parameters
+                    };
+                    if(registry.hasOwnProperty(type)){
+                        registry[type].push(handler);
+                    }else{
+                        registry[type] = [handler];
+                    }
+                    return this;
+                },
+
+                // 触发事件
+                // event: string or object
+                // params: array
+                fire: function(event, params){
+                    var type = typeof event === "string"?event:event.type;
+                    if(registry.hasOwnProperty(type)){
+                        var handlers = registry[type];
+                        for(var index=0;index<handlers.length;index++){
+                            var handler = handlers[index];
+                            var func = handler.method;
+                            if(func.constructor.name != "Function"){ //对于不是Function的method暂不处理
+                                break;
+                            }
+                            if(typeof(handler.parameters) == "undefined"){
+                                func.apply(this, params || [event]);
+                            }else{
+                                func.apply(this, handler.parameters.concat(params) || [event]);
+                            }
+                        }
+                    }
+                    return this;
+                },
+                <!--添加圈选放大控件-->
+                addDragZoom: function(){
+                    map.addInteraction(drag_zoom);
+                    drag_zoom.on("boxend", function(){
+                    });
+                },
+                <!--删除圈选放大控件-->
+                removeDragZoom: function(){
+                    map.removeInteraction(drag_zoom);
+                },
+                <!--投影转换(不改变obj的投影，返回一个新的对象)-->
+                transform: function(obj, src, dest){
+                    if(obj.constructor.name == 'Array'){
+                        <!--point -->
+                        if(obj.length == 2){
+                            return ol.proj.transform(obj, src, dest);
+                        }
+                        <!--extent-->
+                        if(obj.length == 4){
+                            return ol.proj.transformExtent(obj, src, dest);
+                        }
+                    }
+                    <!--geometry-->
+                    if(obj.transform){
+                        var format_geo = new ol.format.GeoJSON();
+                        var temp = format_geo.writeGeometry(obj);
+                        var _geom = format_geo.readGeometry(temp);
+                        _geom.transform(src, dest);
+                        return _geom;
+                    }
+                },
+                <!--通过features(Polygon)重新设定选择区域-->
+                setFeatures: function(features){
+                    pyn_source.clear();
+                    $.each(features,function(index, feature){
+                        pyn_source.addFeature(feature);
+                    });
+                    map.getView().fit(pyn_source.getExtent(), map.getSize());
+                },
+                <!--增加选择区域(Polygon)-->
+                addFeature: function(feature){
+                    pyn_source.addFeature(feature);
+                },
+                <!--获取选择区域的features集合，features的投影取决于map的投影，目前是EPSG:3857-->
+                getFeatures: function(){
+                    var features = pyn_source.getFeatures();
+                    return features.filter(function(feature){
+                        var geom = feature.getGeometry();
+                        return geom.getType() == "Polygon";
+                    });
+                },
+                <!--获取选择区域的extent-->
+                getExtent: function(){
+                    return pyn_source.getExtent();
+                },
+            <!--获取Polygon的坐标点>
+            getCoordinates: function(polygon){
+            var coords = polygon.getCoordinates();
+            coords = coords[0].slice(1);	//slice(verb,切片)
+            return coords;
+        },
+        <!--清空选择区域及相应控件-->
+        clean: function(){
+            pyn_source.clear(); //删除pyn_source中所有的feature
+            map.removeInteraction(pyn_draw);
+            map.removeInteraction(dragbox);
+        },
+        <!--添加矩形选择控件-->
+        addBox: function() {
+            map.addInteraction(dragbox);
+            var that = this;
+            dragbox.once("boxend", function() {
+                var geom = this.getGeometry(); //polygon
+                if(that==null){
+                    return;
+                }
+                var points = that.getCoordinates(geom);
+                that.drawPyn(points, true);
+                map.removeInteraction(dragbox);
+            });
+        },
+        <!--添加多边形控件-->
+        addPyn: function() {
+            map.addInteraction(pyn_draw);
+            var that = this;
+            pyn_draw.once("drawend", function(event) {
+                var polygon = event.feature;
+                var geom = polygon.getGeometry();
+                var points = that.getCoordinates(geom);
+                that.drawPyn(points, false);
+                var geom_4326 = that.transform(geom, "EPSG:3857", "EPSG:4326");
+                that.fire("draw_end",[[geom_4326]]);
+                map.removeInteraction(pyn_draw);
+            });
+        },
+        <!--通过GeoJSON画出选择区域-->
+        addGeoJSON: function(geojson){
+            var geojson_source = new ol.source.Vector({
+                features: (new ol.format.GeoJSON()).readFeatures(geojson)
+            });
+            var fs = geojson_source.getFeatures();
+            this.setFeatures(fs);
+            map.getView().fit(pyn_source.getExtent(), map.getSize());
+        },
+        <!--将选择区域画在地图上，第一个点与最后一个点不同,是否画多边形(默认画)-->
+        drawPyn: function(points, drawpyn) {
+            if(!points || points.length == 0){
+                return;
+            }
+            if(drawpyn == null || drawpyn == true){
+                var coords = points.slice();
+                coords.push(points[0]);
+                var geom = new ol.geom.Polygon([coords]);
+                var selected_box = new ol.Feature({
+                    geometry : geom,
+                });
+                pyn_source.addFeature(selected_box);
+                var geom_4324 = this.transform(geom, "EPSG:3857", "EPSG:4326");
+                this.fire("draw_end",[[geom_4324]]);
+            }
+            for (var index = 0; index < points.length; index++) {
+                var point = this.createPoint(index + 1, points[index]);
+                pyn_source.addFeature(point);
+            }
+        },
+        <!--创建一个点(num:图片标示，目前用下标index，coordinate：坐标)-->
+        createPoint: function(num, coordinate) {
+            var image = new ol.style.Icon(({
+                anchor : [ 0.5, 32 ],
+                anchorXUnits : 'fraction',
+                anchorYUnits : 'pixels',
+                src : "http://210.72.68.236/soil/point_img/"+num
+            }));
+            var iconStyle = new ol.style.Style({
+                image : image
+            });
+            var point = new ol.Feature({
+                geometry : new ol.geom.Point(coordinate),
+            });
+            point.setStyle(iconStyle);
+            return point;
+        }
+    };
+    };
+
+    var _DR = null;
+
+    var getDataRange = function(map, prj) {
+        if (_DR == null) {
+            _DR = new DataRange(map, prj);
+        }
+        return _DR;
+    };
+
+    var DataRange = function(map, prj) {
+
+        if (typeof (prj) == "undefined") {
+            this._prj = "EPSG:3857";
+        } else {
+            this._prj = prj;
+        }
+
+        this._map = map;
+        this.outlines = {}; // dataid ---> feature
+
+        this._source = new ol.source.Vector();
+
+        this._source.on("addfeature", function(evt){
+            var dr = getDataRange();
+            if(dr.getVisible()){
+                var $as = angular.element("[ng-app='advanced_search']");
+                var $scp = $as.scope();
+                $scp.outline = true;
+                $scp.outline_layer = false;
+                $scp.$apply();
+            }
+        });
+
+        this._source.on("clear", function(evt){
+            var $as = angular.element("[ng-app='advanced_search']");
+            var $scp = $as.scope();
+            $scp.outline = false;
+            $scp.outline_layer = true;
+            $scp.$apply();
+        });
+
+        this._layer = new ol.layer.Vector({
+            type : "data-layer",
+            source : this._source,
+            style : new ol.style.Style({
+                stroke : new ol.style.Stroke({
+                    color : '#889DF9',
+                    width : 1
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        });
+
+        this._map.addLayer(this._layer);
+
+        this._makekey = function(keys) {
+            if (typeof (keys) == "undefined" || keys.length == 0) {
+                return null;
+            }
+            return $.md5(keys.join("_"));
+        }
+
+    };
+
+    DataRange.prototype.show = function(){
+        this._layer.setVisible(true);
+    };
+
+    DataRange.prototype.hide = function(){
+        this._layer.setVisible(false);
+    };
+
+    DataRange.prototype.getVisible = function(){
+        return this._layer.getVisible();
+    };
+
+    DataRange.prototype.getOutline = function(productid, dataid) {
+        var _key = this._makekey([ productid, dataid ]);
+        if (_key in this.outlines) {
+            var _feature = this.outlines[_key];
+            if(_feature.get("visible")){
+                return _feature;
+            }
+        }
+        return null;
+    };
+
+    DataRange.prototype.getOutlines = function(productid, dataids) {
+        var rst = [];
+        for(var idx in dataids){
+            var dataid = dataids[idx];
+            var _key = this._makekey([ productid, dataid ]);
+            if (_key in this.outlines) {
+                var _feature = this.outlines[_key];
+                if(_feature.get("visible")){
+                    rst.push(_feature);
+                }
+            }
+        }
+        return rst;
+    };
+
+    <!--显示dataids对应的边框-->
+    DataRange.prototype.showOutlines = function(productid, dataids, callback) {
+
+        var toWkt = [];
+
+        for (var idx = 0; idx < dataids.length; idx++) {
+            var dataid = dataids[idx];
+            var _key = this._makekey([ productid, dataid ]);
+            if (_key in this.outlines) {
+                var _feature = this.outlines[_key];
+                _feature.set("visible", true);
+                this._source.addFeature(_feature);
+            } else {
+                toWkt.push(dataid);
+            }
+        }
+
+        if (toWkt.length > 0) {
+
+            var that = this;
+
+            $.get("search/getOutlinesWKT", {
+                "productid" : productid,
+                "dataids" : $.toJSON(toWkt)
+            }, function(wkts) {
+
+                var wkts = $.parseJSON(wkts);
+                if (wkts == null) {
+                    dialogs.error("获取数据范围失败！");
+                    return;
+                }
+
+                if (typeof (src_prj) == "undefined") {
+                    var src_prj = "EPSG:4326";
+                }
+                for ( var dataid in wkts) {
+                    var _key = that._makekey([ productid, dataid ]);
+                    var _wkt = wkts[dataid];
+
+                    var wf = new ol.format.WKT();
+
+                    var _range_polygon = wf.readGeometry(_wkt).transform(src_prj, that._prj);
+
+                    var _feature = new ol.Feature({
+                        productid : productid,
+                        dataid : dataid,
+                        visible : true,
+                        geometry : _range_polygon
+                    });
+
+                    that._source.addFeature(_feature);
+
+                    that.outlines[_key] = _feature;
+
+                }
+                that._map.getView().fit(that._source.getExtent(), that._map.getSize());
+                if(callback){
+                    callback();
+                }
+            });
+
+        } else {
+            this._map.getView().fit(this._source.getExtent(), this._map.getSize());
+            if(callback){
+                callback();
+            }
+        }
+    };
+    <!--隐藏dataid对应的边框-->
+    DataRange.prototype.hideOutline = function(productid, dataid) {
+
+        var _key = this._makekey([ productid, dataid ]);
+
+        if (!(_key in this.outlines)) {
+            return;
+        }
+        var _feature = this.outlines[_key];
+        _feature.set("visible", false);
+        this._source.removeFeature(_feature);
+    };
+    <!--删除地图上所有的边框-->
+    DataRange.prototype.clear = function() {
+        this._source.clear();
+        this.outlines = {};
+    };
+
+    $(function() {
+        var dlg_callback = function() {
+            var dataset = DTree.getSelected();
+            if (dataset == null) {
+                return;
+            }
+            if (dataset.dataid != cs.productid) {
+                cs.productid = dataset.dataid;
+                cs.datatype = dataset.datatype;
+                $("#dataset-name").html(dataset.dataname);
+                $("#result-panel").hide();
+            }
+            if (dataset.pid == 302){
+                $("#sdate-input,#edate-input,#data-month-sel").val("").prop("disabled", true);
+            }else{
+                $("#sdate-input,#edate-input,#data-month-sel").val("").prop("disabled", false);
+            }
+        };
+
+        // 弹出数据集选择对话框
+        $("#dataset-btn").on("click", function() {
+            $.ajax({
+                url : "/dataset/datasets",
+                dataType : "JSON",
+                success : function(datasets) {
+                    var dlg_cnt = DTree.buildTree(datasets);
+                    dialogs.dialog(dlg_cnt, dlg_callback, "all-datasets-dlg", "500px");
+                },
+                error : function(xhr, code, what) {
+                    dialogs.error("数据集获取失败!");
+                }
+            });
+        });
+    });
+
+    var BaseGeom = function(){
+
+        this._source = new ol.source.Vector();
+
+        this._source.on("addfeature", function(evt){
+            var $as = angular.element("[ng-app='advanced_search']");
+            var $scp = $as.scope();
+            $scp.sel = true;
+            $scp.sel_layer = false;
+            $scp.$apply();
+        });
+
+        this._source.on("clear", function(evt){
+            var $as = angular.element("[ng-app='advanced_search']");
+            var $scp = $as.scope();
+            $scp.sel = false;
+            $scp.sel_layer = true;
+            $scp.$apply();
+        });
+
+    };
+
+    <!--第二组搜索条件 -->
+    var _geomanager = null;
+
+    var getGeoManager = function(){
+        if(_geomanager == null){
+            _geomanager = new GeoManager();
+        }
+        return _geomanager;
+    };
+
+    var GeoManager = function(){
+        this.pre = null;
+        this.cur = null;
+        this.geos = {};
+    };
+
+    GeoManager.prototype.hide = function(){
+        this.cur.hide();
+    };
+
+    GeoManager.prototype.show = function(){
+        this.cur.show();
+    };
+
+    GeoManager.prototype.setCur = function(cur){
+        this.pre = this.cur;
+        this.cur = cur;
+
+        if(this.pre != null){
+            this.pre.hide();
+        }
+
+        if(this.cur != null){
+            var gname = this.cur.getName();
+            this.geos[gname] = this.cur;
+
+            var $as = angular.element("[ng-app='advanced_search']");
+            var $scp = $as.scope();
+            $scp.sel_layer = false;
+
+            if($scp.sel){
+                this.cur.show();
+            }
+
+        }
+    };
+
+    GeoManager.prototype.getQueryArgs = function(){
+//	debugger;
+        if(this.cur == null){
+            return null;
+        }
+
+        var args = this.cur.getParams();
+        return args;
+    };
+
+    GeoManager.prototype.reset = function(){
+        for(var key in this.geos){
+            var geo = this.geos[key];
+            geo.reset();
+        }
+    };
+
+    var BaseManager = function(){
+
+        this.show = function(){},
+
+            this.hide = function(){},
+
+            this.reset = function(){},
+
+            this.getParams = function(){
+                return null;
+            },
+
+            this.getName = function(){
+                throw "No Implemented";
+            }
+    };
+
+
+    var _map_sel = null;
+
+    var getMapSel = function(){
+        if(_map_sel == null){
+            _map_sel = new MapSel();
+        }
+        return _map_sel;
+    };
+
+    var MapSel = function(){
+
+        BaseGeom.call(this);
+
+        this._mapsel_layer = new ol.layer.Vector({
+            source : this._source,
+            style : new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#00B900'
+                    })
+                }),
+                stroke : new ol.style.Stroke({
+                    color : '#00B900',
+                    width : 1
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        }),
+
+            mapctx.editor_map.addLayer(this._mapsel_layer);
+
+        <!-- 多边形控件-->
+        this._pyn_draw = new ol.interaction.Draw({
+            source : this._source,
+            type : "Polygon"
+        });
+        <!--矩形控件 -->
+        this._dragbox = new ol.interaction.DragBox({
+            condition : ol.events.condition.always,
+            style : new ol.style.Style({
+                stroke : new ol.style.Stroke({
+                    color : '#00B900'
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        });
+        <!--点控件 -->
+        this._point_draw = new ol.interaction.Draw({
+            source : this._source,
+            type : "Point"
+        });
+        this._draw_tool = null;
+        this.selgeom = null;
+    };
+
+    MapSel.prototype = new BaseGeom();
+
+    MapSel.prototype.show = function(){
+        this._mapsel_layer.setVisible(true);
+    };
+
+    MapSel.prototype.hide = function(){
+        if(this._draw_tool != null){
+            mapctx.editor_map.removeInteraction(this._draw_tool);
+            this._draw_tool = null;
+        }
+        this._mapsel_layer.setVisible(false);
+    };
+
+    MapSel.prototype.clear = function(){
+        this._source.clear();
+        this.selgeom = null;
+    };
+
+    <!--取消控件 -->
+    MapSel.prototype.remove_draw = function(){
+        if(this._draw_tool == null){
+            return;
+        }
+        mapctx.editor_map.removeInteraction(this._draw_tool);
+        this._draw_tool = null;
+    };
+    <!-- 画点-->
+    MapSel.prototype.draw_point = function(call_back){
+        this._source.clear();
+        if(this._draw_tool != null){
+            mapctx.editor_map.removeInteraction(this._draw_tool);
+        }
+        this._draw_tool = this._point_draw;
+
+        mapctx.editor_map.addInteraction(this._point_draw);
+        var that = this;
+        this._point_draw.once("drawend", function(event) {
+            mapctx.editor_map.removeInteraction(that._point_draw);
+            var point = event.feature;
+            var geom = point.getGeometry();
+            that.selgeom = geom;
+            if(typeof(call_back) == "function"){
+                call_back(geom);
+            }
+        });
+    };
+    <!--画矩形-->
+    MapSel.prototype.draw_box = function(call_back){
+        this._source.clear();
+        if(this._draw_tool != null){
+            mapctx.editor_map.removeInteraction(this._draw_tool);
+        }
+        this._draw_tool = this._dragbox;
+
+        mapctx.editor_map.addInteraction(this._dragbox);
+        var that = this;
+        this._dragbox.once("boxend", function() {
+            var geom = this.getGeometry(); //polygon
+            if(that==null){
+                return;
+            }
+            var points = geom.getCoordinates()[0].slice(1);
+            that._draw_polygon(points, true);
+            that.selgeom = geom;
+            mapctx.editor_map.removeInteraction(that._dragbox);
+            if(typeof(call_back) == "function"){
+                call_back(geom);
+            }
+        });
+    };
+    <!--画多边形 -->
+    MapSel.prototype.draw_pyn = function(call_back){
+        this._source.clear();
+        if(this._draw_tool != null){
+            mapctx.editor_map.removeInteraction(this._draw_tool);
+        }
+        this._draw_tool = this._pyn_draw;
+
+        mapctx.editor_map.addInteraction(this._pyn_draw);
+        var that = this;
+        this._pyn_draw.once("drawend", function(event) {
+            var polygon = event.feature;
+            var geom = polygon.getGeometry();
+            var points = geom.getCoordinates()[0].slice(1);
+            that._draw_polygon(points, false);
+            that.selgeom = geom;
+            mapctx.editor_map.removeInteraction(that._pyn_draw);
+            if(typeof(call_back) == "function"){
+                call_back(geom);
+            }
+        });
+    };
+    <!--画点-->
+    MapSel.prototype._create_point = function(num, coordinate){
+        var image = new ol.style.Icon(({
+            anchor : [ 0.5, 32 ],
+            anchorXUnits : 'fraction',
+            anchorYUnits : 'pixels',
+            src : "http://www.gscloud.cn/search/point_img/"+num
+        }));
+
+        var iconStyle = new ol.style.Style({
+            image : image
+        });
+
+        var point_geom = new ol.geom.Point(coordinate);
+
+        var point = new ol.Feature({
+            geometry : point_geom,
+        });
+        point.setStyle(iconStyle);
+        return point;
+    };
+    <!-- 画多边形 -->
+    MapSel.prototype._draw_polygon = function(points, drawpyn) {
+        if(!points || points.length == 0){
+            return;
+        }
+        if(drawpyn == null || drawpyn == true){
+            var coords = points.slice();
+            coords.push(points[0]);
+            var geom = new ol.geom.Polygon([coords]);
+            var selected_box = new ol.Feature({
+                geometry : geom,
+            });
+            this._source.addFeature(selected_box);
+        }
+
+        for (var index = 0; index < points.length; index++) {
+            var point = this._create_point(index + 1, points[index]);
+            this._source.addFeature(point);
+        }
+    }
+
+    var MapSelManager_CNT = function(){
+
+        this.getName = function(){
+            return "map-area-sel";
+        };
+
+        this.show = function(){
+            var MS = getMapSel();
+            MS.show();
+        };
+
+        this.hide = function(){
+            var MS = getMapSel();
+            MS.hide();
+            $(".ms-active-btn").trigger("click");
+        };
+
+        this.reset = function(){
+            var MS = getMapSel();
+            MS.clear();
+        };
+
+        this.getParams = function(){
+            var MS = getMapSel();
+            if(MS.selgeom == null){
+                return null;
+            }
+
+            var format_geo = new ol.format.GeoJSON();
+            var temp = format_geo.writeGeometry(MS.selgeom);
+            var _geom = format_geo.readGeometry(temp);
+            _geom.transform("EPSG:3857", "EPSG:4326");
+
+            var format_wkt = new ol.format.WKT();
+            var wkt = format_wkt.writeGeometry(_geom);
+
+            return {
+                "qtype": 1,
+                "wkt": wkt
+            };
+        };
+
+    };
+
+    MapSelManager_CNT.prototype = BaseManager;
+
+    var MapSelManager = new MapSelManager_CNT();
+
+    var PathrowManager_CNT = function(){
+
+        this.show = function(){
+            $.map($(".prow-input"), function(input){
+                if($(input).val().length == 0){
+                    return;
+                }
+                var val = parseInt($(input).val());
+                if(isNaN(val)){
+                    $(input).addClass("input-error");
+                }else{
+                    $(input).removeClass("input-error");
+                }
+            });
+        };
+
+        this.hide = function(){
+            $(".prow-input").removeClass("input-error");
+        };
+
+        this.getName = function(){
+            return "row-col-input";
+        };
+
+        this.reset = function(){
+            $(".prow-input").val("").removeClass("input-error");
+        };
+    };
+
+    PathrowManager_CNT.prototype = new BaseManager();
+
+    var PathrowManager = new PathrowManager_CNT();
+
+    var _sel_data = null;
+
+    var getSelData = function(){
+        if(_sel_data == null){
+            _sel_data = new SelData();
+        }
+        return _sel_data;
+    };
+
+    var SelData = function(){
+
+        BaseGeom.call(this);
+
+        this._sel_layer = new ol.layer.Vector({
+            source : this._source,
+            style : new ol.style.Style({
+                stroke : new ol.style.Stroke({
+                    color : 'red',
+                    width : 1
+                }),
+                fill : new ol.style.Fill({
+                    color : 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        });
+
+        this.filepath = null;
+
+        mapctx.editor_map.addLayer(this._sel_layer);
+    };
+
+    SelData.prototype = new BaseGeom();
+
+    SelData.prototype.show = function(){
+        this._sel_layer.setVisible(true);
+    };
+
+    SelData.prototype.hide = function(){
+        this._sel_layer.setVisible(false);
+    };
+
+    SelData.prototype.reset = function(){
+        this._source.clear();
+        this.filepath = null;
+    }
+
+    SelData.prototype.draw_gson = function(gson){
+        if(typeof(gson) == "undefined" || gson == null){
+            return;
+        }
+
+        this.selgson = gson;
+
+        var features = (new ol.format.GeoJSON()).readFeatures(gson);
+
+        this._source.clear();
+
+        this._source.addFeatures(features);
+
+        mapctx.editor_view.fit(this._source.getExtent(), mapctx.editor_map.getSize());
+
+    };
+
+
+    SelData.prototype.getWKT = function(){
+
+        var features = this._source.getFeatures();
+        if(features==null || features.length == 0){
+            return null;
+        }
+
+        var coords = [];
+        $.each(features, function(index, feature){
+            var geom = feature.getGeometry();
+            if(geom.getType() == "MultiPolygon"){
+                coords = coords.concat(geom.getCoordinates());
+            }
+            if(geom.getType() == "Polygon"){
+                coords.push(geom.getCoordinates());
+            }
+        });
+
+        var multipyn = new ol.geom.MultiPolygon(coords);
+        multipyn.transform("EPSG:3857", "EPSG:4326");
+
+        var format_wkt = new ol.format.WKT();
+        var wkt = format_wkt.writeGeometry(multipyn)
+
+        return wkt;
+
+    };
+
+
+    var DTree = {
+
+        data_idx: 0,
+
+        datasets: [],
+
+        processLeafClick: function(leaf, e){
+            var evt = e || window.event;
+            evt.stopPropagation();
+
+            if(evt.target.tagName == "INPUT" && evt.target.type == "radio"){
+                $(".dtree-leaf.dtree-selected").removeClass("dtree-selected");
+                $(leaf).find(".dtree-leaf").addClass("dtree-selected");
+                var dataname = $(leaf).find(".leaf-dataname-span").text();
+                $(".dtree-selected-tips").html(dataname);
+            }
+
+        },
+
+        processDirClick: function(dir, e){
+            var evt = e || window.event;
+            evt.stopPropagation();
+            if(evt.target.tagName == "UL"){
+                return;
+            }
+            if($(dir).hasClass("open")){
+                $(dir).find(">.status-icon").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
+                $(dir).removeClass("open").addClass("closed");
+                $(dir).find(">ul").hide();
+            }else if($(dir).hasClass("closed")){
+                $(dir).find(">.status-icon").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+                $(dir).removeClass("closed").addClass("open");
+                $(dir).find(">ul").show();
+            }
+        },
+
+        //返回叶子节点html
+        _getLeaf: function(dataname){
+            //var file_icon = "<span class='glyphicon glyphicon-file' style='padding-left: 5px; color: rgb(64, 145, 108);'></span>";
+            var text_span = "<span class='leaf-dataname-span'>"+dataname+"</span>";
+            var leaf_radio = "<div class='checkbox' style='margin-top: 0px;margin-bottom: 0px;'><label class='dtree-leaf' style='padding-left:0px;'><input type='radio' name='dataset-radio' value="+this.data_idx+">"+text_span+"</label></div>";
+            return $("<li class='dtree-file'  style='cursor:pointer' onclick=DTree.processLeafClick(this,event)></li>").append(leaf_radio);
+        },
+
+        //返回目录节点html
+        _getDir: function(dataname, state){
+
+            var text_span = "<span style='padding-left: 6px;font-weight: bold;'>"+dataname+"</span>";
+
+            if(typeof(state) == "undefined" || state=="closed"){
+                var open_icon = "<span class='status-icon glyphicon glyphicon-plus-sign' style='color: rgb(151, 157, 149);'></span>";
+                return $("<li class='dtree-dir closed' onclick=DTree.processDirClick(this,event)></li>").append([open_icon,text_span].join(""));
+            }else if(state == "open"){
+                var open_icon = "<span class='status-icon glyphicon glyphicon-minus-sign' style='color: rgb(151, 157, 149);'></span>";
+                return $("<li class='dtree-dir open' onclick=DTree.processDirClick(this,event)></li>").append([open_icon,text_span].join(""));
+            }
+        },
+
+        //构造目录树，只有叶子节点上有数据(attributes)
+        _buildTree: function(datasets){
+
+            var $root = $("<ul style='list-style:none;'></ul>");
+
+            for(var idx=0;idx<datasets.length;idx++){
+                var dataset = datasets[idx];
+                var dataname = dataset.text || "未知";
+                var children = dataset.children || [];
+
+                if(children.length > 0){
+                    var state = dataset.state || "closed";
+                    var $li_node = this._getDir(dataname, state);
+                    var $ch_node = this._buildTree(children);
+                    if(state == "closed"){
+                        $ch_node.hide();
+                    }
+                    $li_node.append($ch_node);
+                }else{
+                    var $li_node = this._getLeaf(dataname);
+                    var attrs = dataset.attributes || null;
+                    this.datasets.push(attrs);
+                    this.data_idx += 1;
+                }
+
+                $root.append($li_node);
+            }
+
+            return $root;
+
+        },
+
+        _adjust_style: function($root){
+            if($root.length == 0){
+                return;
+            }
+            //$root.css("padding-left", "0px");
+            return $root;
+        },
+
+        buildTree: function(datasets){
+            var $root = this._buildTree(datasets);
+            this._adjust_style($root);
+
+            var data = [];
+            data.push("<div class='dtree-selected-tips selected'>无</div>" );
+
+            data.push("<div style='max-height: 280px; min-height: 280px; overflow-y: scroll'>" );
+            data.push( $root[0].outerHTML );
+            data.push("</div>" );
+
+            return data.join("") ;
+        },
+
+        //返回选中的数据
+        getSelected: function(){
+            var idx = parseInt($(":input[name='dataset-radio']:checked").val());
+            if(isNaN(idx)){
+                return null;
+            }
+            return this.datasets[idx];
+        },
+    }
+
+    $(function() {
+        var mapinfo = {
+            "maxzoom" : 15,
+            "minzoom" : 3,
+            "zoom" : 4,
+            "center_x" : 105,
+            "center_y" : 35
+        };
+
+        $(document).on("mapctx_AfterInitMap", function(e, mapobj) {
+            var layer = mapctx.createGDlayer();
+
+            mapctx.setBaseLayer(layer);
+
+            $(".provinces").trigger("click");
+
+            mapctx.editor_map.addInteraction(new HoverInteraction());
+
+            mapctx.editor_map.addInteraction(selectSingleClick);
+
+        });
+
+        mapctx.reinit_map("mapdiv", mapinfo);
+
+    });
+
+    //选择数据类型的选择功能
+    var selectSingleClick = new ol.interaction.Select({
+        toggleCondition : ol.events.condition.singleClick,
+        layers : function(layer){
+            if(layer.get("type") == "data-layer"){
+                return true;
+            }else{
+                return false;
+            }
+        },
+        style : new ol.style.Style({
+            stroke : new ol.style.Stroke({
+                color : 'red',
+                width : 1
+            })
+        })
+    });
+
+    selectSingleClick.on('select', function(e) {
+        cs.trigger = false;
+        var deselected = e.deselected;
+        for(var idx in deselected){
+            var feature = deselected[idx];
+            var dataid = feature.get("dataid");
+            $("#result-listview").datalistview("deselect", [[dataid]]);
+        }
+
+        var selected = e.selected;
+        if(selected.length > 0){
+            var dataids = $.map(selected, function(feature){
+                return feature.get("dataid");
+            });
+            $("#result-listview").datalistview("select", [dataids]);
+            var dataid = dataids.pop();
+            window.location.href = "#"+dataid;
+        }
+    });
+
+
+
+    var HoverInteraction = function(){
+
+        ol.interaction.Pointer.call(this, {
+            handleMoveEvent: this.handleMoveEvent
+        });
+
+        this.cursor_ = 'pointer';
+
+        this.previousCursor_ = undefined;
+    };
+
+    ol.inherits(HoverInteraction, ol.interaction.Pointer);
+
+    HoverInteraction.prototype.handleMoveEvent = function(evt) {
+        if (this.cursor_) {
+            var map = evt.map;
+            var feature = map.forEachFeatureAtPixel(evt.pixel,function(feature, layer) {
+                return feature;
+            });
+
+            var element = evt.map.getTargetElement();
+
+            if (feature) {
+                if (element.style.cursor != this.cursor_) {
+                    this.previousCursor_ = element.style.cursor;
+                    element.style.cursor = this.cursor_;
+                }
+            }else if(this.previousCursor_ !== undefined) {
+                element.style.cursor = this.previousCursor_;
+                this.previousCursor_ = undefined;
+            }
+        }
+    };
+
+</script>
+
+
+</body>
+</html>

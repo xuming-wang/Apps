@@ -1,0 +1,295 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
+    <link rel="stylesheet" href="css/leaflet.css"/>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.draw-0.4.10.js"></script>
+    <link href="css/leaflet.draw-0.4.10.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/application.css">
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/geojson.js"></script>
+
+    <style type="text/css">
+        body, #map {
+            height: 100%;
+        }
+
+        #btns {
+            position: absolute;
+            left: 20px;
+            top: 120px;
+            z-index: 100;
+            background-color: #222;
+            border-color: #90feb5;
+        }
+        #pager{
+            position:absolute;
+            width:200px;
+            height:100px;
+            z-index:100;
+            left:20px;top:300px;
+        }
+        #permission-btns{
+            position: absolute;
+            right:20px;top:100px;
+            z-index:100;
+            background-color: #222;
+            border-color: #90feb5;
+        }
+    </style>
+
+
+</head>
+
+<body>
+<div>
+
+    <div id="map">
+        <a class="btn btn-inverse" id="clearButton" href="#">Clear Polygon</a>
+    </div>
+    <div>
+        <div id="btns" style="display: inline-block;">
+            <input type="button" class="btn" id="data-query-btn" value="Search" style="display: block;"></input>
+            <input type="button" class="btn" id="visual-composite-btn" value="Visual composite"
+                   style="display: block;"></input>
+            <input type="button" class="btn" id="prod-composite-btn" value="Production composite"
+                   style="display: block;"></input>
+        </div>
+        <div id="permission-btns" style="display: inline-block;color: white">
+            <div id="scheduleStatus"></div>
+        </div>
+
+        <div id="result-list">
+            <div id="pager" style=""></div>
+        </div>
+
+    </div>
+</div>
+</body>
+
+<script src="js/application.js"></script>
+<script type="text/javascript">
+    $("#data-query-btn").on("click", imageQuery);
+    $("#visual-composite-btn").on("click", visualTms);
+    $("#prod-composite-btn").on("click", pro_composite_onclick);
+    var DSName = "landsat8";
+    var startDate = "2014-09-01";
+    var endDate = "2015-09-13";
+    var baseurl = "/retrieve/query3";
+
+    function makeQueryStr(pointlist) {
+        var paramsQuery = {};
+        paramsQuery["ds"] = DSName;
+        paramsQuery["sdate"] = startDate;
+        paramsQuery["edate"] = endDate;
+        paramsQuery["polygon"] = GJ.fromPolygon(summary.getPolygon());
+        return paramsQuery;
+    }
+
+
+    function imageQuery() {
+        var parametersQuery = makeQueryStr();
+       // alert(JSON.stringify(parametersQuery));
+
+        $.ajax({
+            url: baseurl,
+            data: JSON.stringify(
+                parametersQuery
+            ),
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            type: "post",
+            success : function(result) {
+                //alert(JSON.stringify(result));
+                for(var i=0;i<result.polygonData.length;i++){
+                    $("#pager").append("<div>" +
+                        "<div>" +
+                        "<img width='100px' src="+result.polygonData[i].location+">" +
+                        "</div>" +
+                        "<div>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td >EntityId：</td>" +
+                        "<td >"+ result.polygonData[i].sceneId+"</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td >Path：</td>" +
+                        "<td>"+result.polygonData[i].path+"</td>" +
+                        "<td>Row：</td>" +
+                        "<td>"+result.polygonData[i].row+"</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td>Point1：</td>" +
+                        "<td>"+result.polygonData[i].llPoint+"</td>" +
+                        "<td>Point2：</td>" +
+                        "<td>"+result.polygonData[i].lrPoint+"</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td>Point3：</td>" +
+                        "<td>"+result.polygonData[i].urPoint+"</td>" +
+                        "<td>Point4：</td>" +
+                        "<td>"+result.polygonData[i].ulPoint+"</td>" +
+                        "</tr>" +
+                        " </table>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td>DateAcquired：</td>" +
+                        "<td>"+result.polygonData[i].acquiredTime+"</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "<table style='background-color:white;width:100%'>" +
+                        "<tr>" +
+                        "<td >Exist：</td>" +
+                        "<td>true</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "</div>")
+                }
+            },
+            error: function (xhr, code, what) {
+                alert("错误！！")
+            }
+        });
+    }
+
+    function visualTms() {
+        var geoJson = "";
+        var polygon = summary.getPolygon();
+        if (polygon != null) {
+            geoJson = GJ.fromPolygon(polygon);
+        }
+
+        WOLayer = new L.tileLayer(
+            '/tmsServer/ndvi/{z}/{x}/{y}?mask={mask}', {
+            format: 'image/png',
+            transparent: true,
+            mask: encodeURIComponent(geoJson),
+            attribution: 'Azavea'
+        });
+        WOLayer.addTo(map);
+        map.lc.addOverlay(WOLayer, "Weighted Overlay");
+    }
+
+    var proParams = {};
+    var bandsList = [4, 5];
+    var cellSize = 30;
+    var selectMethod = "ndvi";
+    var numPartitions = 100;
+    proParams["bandsList"] = bandsList;
+    proParams["cellSize"] = cellSize;
+    proParams["selectMethod"] = selectMethod;
+    proParams["numPartitions"] = numPartitions;
+    var proJson = JSON.stringify(proParams);
+    /*function pro_composite_onclick() {
+        $.ajax({
+            url : "/proComposite",
+            data : proJson,
+            dataType : "json",
+            contentType:"application/json;charset=utf-8",
+            type: "post",
+            success : function(data) {
+                alert(JSON.stringify(data));
+                console.log(data.result.jobId);
+                /!*if (data != null && data.result.status != 'FINISHED') {
+                    var param = {
+                        jobId: data.result.jobId
+                    };
+                    $.post("getDataByJobId", param, function(data){
+                        alert(JSON.stringify(data));
+                    });
+               }*!/
+
+            },
+            error : function(xhr, code, what) {
+                //$("#result-listview").datalistview("loading", [ false ]);
+                if(xhr.status == 404){
+                    alert("请求出错")
+                    //$("#empty-result-panel").show();
+                }
+            }
+
+        });
+    }*/
+
+    function pro_composite_onclick() {
+        var ajax_prodComposite = null;
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            ajax_prodComposite=new XMLHttpRequest();
+        } else {// code for IE6, IE5
+            ajax_prodComposite=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        ajax_prodComposite.open("post","/proComposite", true);//true表示异步，false表示同步
+        ajax_prodComposite.onreadystatechange=callback;
+        ajax_prodComposite.send(proJson);
+
+        function callback() {
+            if (ajax_prodComposite.readyState==4) {// 4 = "loaded"
+                if (ajax_prodComposite.status==200) {// 200 = OK
+                    var jsonData=JSON.parse(ajax_prodComposite.responseText);
+                    var status = jsonData.result.status;
+                        if (status != "FINISHED" && status != "ERROR") {
+                            $("#scheduleStatus").text("任务状态: 运行中");
+                            getTaskStatus(jsonData.result.jobId);
+                        }
+                } else {
+                    var json=JSON.parse(ajax_prodComposite.responseText);
+                    // alert("Problem retrieving XML data");
+                    if (json != null && json.result.status != 'FINISHED') {
+                        getTaskStatus(json.result.status);
+                    }
+                }
+            }
+        }
+    };
+
+    function getTaskStatus(jobId) {
+        var param = {
+            jobId: jobId
+        };
+        var url = "getJobStatusByJobId2";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: param,
+            success: function(data){
+                // alert(JSON.stringify(data));
+                var  status = data.result.status;
+                var resJobId = data.result.jobId;
+                var timeId = "";
+                if (status != "FINISHED" && status != "ERROR") {
+                    timeId = setInterval(getTaskStatus(resJobId), 30000);
+                } else if(status == "FINISHED"){
+                    $("#scheduleStatus").text("任务状态: 已完成");
+                    clearInterval(timeId);
+                } else if(status == "ERROR"){
+                    $("#scheduleStatus").text("请求错误");
+                    clearInterval(timeId);
+                }
+
+            },
+            dataType: "json"
+        });
+    }
+
+    var timeout = false; //启动及关闭按钮
+    function time(jobId, status)
+    {
+        var newJobId = jobId;
+        if(timeout) return;
+        var info = getTaskStatus(jobId);
+        console.log(info);
+        if (status != "ERROR" || status != "FINISHED") {
+            //time是指本身,延时递归调用自己,100为间隔调用时间,单位毫秒
+            setTimeout(time(jobId,status),50000);
+        }
+    }
+</script>
+</html>

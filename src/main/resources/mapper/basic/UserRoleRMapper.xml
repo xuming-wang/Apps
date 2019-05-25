@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.air.bigearth.apps.system.mapper.basic.UserRoleRMapper" >
+  <resultMap id="BaseResultMap" type="org.air.bigearth.apps.system.domain.basic.UserRole" >
+ 	 <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="yw_id" property="ywId" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="org.air.bigearth.apps.system.domain.basic.UserRole" >
+    insert into apps_t_sys_user_role (id,user_id, role_id, yw_id
+      )
+    values (#{id,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, #{ywId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id,user_id, role_id, yw_id
+    from apps_t_sys_user_role
+  </select>
+</mapper>

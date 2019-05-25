@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.air.bigearth.apps.system.mapper.extend.AuthorityExtendMapper" >
+  <resultMap id="BaseResultMap" type="org.air.bigearth.apps.system.domain.basic.Authority" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="controller" property="controller" jdbcType="VARCHAR" />
+    <result column="des" property="des" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="AuthorityControllerResultMap" type="org.air.bigearth.apps.system.domain.extend.AuthorityController">
+  	<result column="controller" property="controller" jdbcType="VARCHAR" />
+  	<collection property="authorityList" ofType="org.air.bigearth.apps.system.domain.basic.Authority">
+  		<id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="url" property="url" jdbcType="VARCHAR" />
+	    <result column="method" property="method" jdbcType="VARCHAR" />
+	    <result column="controller" property="controller" jdbcType="VARCHAR" />
+	    <result column="des" property="des" jdbcType="VARCHAR" />
+  	</collection>
+  </resultMap>
+  
+  <select id="getAuthorityByIds" resultMap="BaseResultMap" >
+    select id, name, code, url, method, controller, des
+    from apps_t_sys_authority
+    where id  in 
+    <foreach collection="ids" open="(" close=")" item="id" separator=",">
+    	#{id,jdbcType=VARCHAR}
+    </foreach>
+  </select>
+  
+  <select id="getAuthority" resultMap="AuthorityControllerResultMap">
+  	select id, name, code, url, method, controller, des
+    from apps_t_sys_authority
+  </select>
+  
+  <select id="getLikeAuthority" resultMap="BaseResultMap">
+   select id, name, code, url, method, controller, des
+    from apps_t_sys_authority
+    where method = #{method,jdbcType=VARCHAR}
+    <if test="word!=null">
+    	<bind name="w" value="'%'+ word +'%'"/>
+    	and url like #{w}
+    </if>
+  </select>
+</mapper>

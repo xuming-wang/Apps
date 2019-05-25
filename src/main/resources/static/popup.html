@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>无标题文档</title>
+    <script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="common/js/popup.js"></script>
+    <link href="common/css/popup.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        *{
+            margin: 0px auto;
+        }
+    </style>
+</head>
+
+<body style="background-color:#999">
+<div style="width:200px; margin-top:10px">
+    <input type="button" value="弹出窗口" id="btntc" style="width:100px; height:30px; font-size:18px;" />
+</div>
+
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        $('#btntc').click(function(){
+            var html = "<div style='color:red'>这是测试的弹窗</div>";
+            var button ="<input type='button' value='确定' /><input type='button' value='取消' />";
+
+            var win = new Window({
+
+                width : 400, //宽度
+                height : 300, //高度
+                title : '测试弹窗', //标题
+                content : html, //内容
+                isMask : false, //是否遮罩
+                buttons : button, //按钮
+                isDrag:true//是否移动
+
+            });
+
+        })
+    });
+</script>
+</html>

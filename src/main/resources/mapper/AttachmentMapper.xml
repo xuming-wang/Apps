@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.air.bigearth.apps.file.mapper.AttachmentMapper">
+	<!-- 根据ID查询 -->
+	<select id="getById" parameterType="String" resultType="org.air.bigearth.apps.file.domain.Attachment">
+		<![CDATA[
+			SELECT * FROM APPS_T_SYS_ATTACHMENT WHERE ATTACHMENTID = #{attachmentId}
+		]]>
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="insertDto" parameterType="org.air.bigearth.apps.file.domain.Attachment">
+		insert into apps_t_sys_attachment
+		(ATTACHMENTID,BUSIID,busiType,FILENAME,ORIGINALFILENAME,BASEPATH,FILEPATH,FILESIZE,SUFFIX,STRATEGYID,
+		UPLOADTIME,encryptedType,compressedFlag,fileCode,uploadMetadata,createUserId,updateTime
+		<if test="fileShare != null and fileShare !='' ">,fileShare</if>
+		
+		<if test="attachment != null and attachment !='' ">,attachment</if>
+		)
+		values
+		(#{attachmentId},#{busiId},#{busiType},#{fileName},#{originalFileName},#{basePath},#{filePath},
+		#{fileSize,jdbcType=BIGINT},#{suffix},#{strategyId},#{uploadTime},#{encryptedType},#{compressedFlag},#{fileCode},#{uploadMetadata},
+		#{createUserId},#{updateTime}
+		<if test="fileShare != null and fileShare !='' ">,#{fileShare}</if>
+		<if test="attachment != null and attachment !='' ">
+		,#{attachment,jdbcType=BLOB}
+		</if>
+		)
+	</insert>
+	<!-- 查询列表 apps_t_sys_filestrategy -->
+	<select id="searchByParamsPage" parameterType="java.util.Map" resultType="org.air.bigearth.apps.file.domain.Attachment">
+		select a.*,f.strategyName from apps_t_sys_attachment a, apps_t_sys_filestrategy f
+		where f.status = '1' and a.strategyId = f.strategyId
+		<if test="strategyId != null and strategyId !='' ">
+			and f.strategyId = #{strategyId}
+		</if>
+		<if test="originalFileName != null and originalFileName !='' ">
+			and a.ORIGINALFILENAME like '%' || #{originalFileName} || '%'
+		</if>
+		<if test="strategyName != null and strategyName !='' ">
+			and f.strategyName like '%' || #{strategyName} || '%'
+		</if> 
+		<if test="createUserId != null and createUserId !='' ">
+			and a.createUserId like '%' || #{createUserId} || '%'
+		</if> 
+		
+		<if test="startTime != null and startTime !='' ">
+		<![CDATA[
+			 AND uploadTime >='${startTime}'
+		]]> 
+		</if>
+		
+		<if test="endTime != null and endTime !='' ">
+		<![CDATA[
+			 AND uploadTime <='${endTime}'
+		]]> 
+		</if>
+		<if test="fileCode != null and fileCode !='' ">
+			and a.fileCode = #{fileCode}
+		</if>
+		
+		order by a.uploadtime
+	</select>
+	
+	<!-- 查询附件信息 -->
+	<select id="attachmentParams" parameterType="java.util.Map" resultType="org.air.bigearth.apps.file.domain.Attachment">
+		select * from apps_t_sys_attachment a
+		where a.status = '1' 
+		<if test="attachmentId != null and attachmentId !='' ">
+			and a.attachmentId = #{attachmentId}
+		</if>
+		<if test="createUserId != null and createUserId !='' ">
+			and a.createUserId = #{createUserId}
+		</if>
+		<if test="fileMd5 != null and fileMd5 !='' ">
+			and a.fileCode = #{fileMd5}
+		</if> 
+		order by a.uploadtime desc
+	</select>
+	<!-- 查询附件信息 -->
+	<select id="attachmentBusiIds" parameterType="java.util.List" resultType="org.air.bigearth.apps.file.domain.Attachment">
+		select * from apps_t_sys_attachment a
+		where a.status = '1' and savestate='2'
+		and busiId in(
+		<foreach collection="array" item="busiId" index="idx">
+				<if test="idx>0">,</if>
+				#{busiId}
+		</foreach>
+		)
+	</select>
+	<!-- 删除 -->
+	<delete id="deleteAttachment" parameterType = "java.util.Map" >
+		delete from apps_t_sys_attachment where 1=1
+		<if test="attachmentId != null and attachmentId !='' ">
+			and attachmentId = #{attachmentId}
+		</if>
+		<if test="busiId != null and busiId !='' ">
+			and busiId=#{busiId}
+		</if>
+	</delete>
+	<!-- 设置保存状态-->
+	<update id="updateSaveState" parameterType = "java.util.List" >
+	 update  apps_t_sys_attachment set savestate = 2 where attachmentId in (
+			<foreach collection="array" item="attachmentId" index="idx">
+				<if test="idx>0">,</if>
+				#{attachmentId}
+			</foreach>
+		)
+	</update>
+	<!-- 设置保存附件修改状态-->
+	<update id="saveStateAttachment" parameterType = "java.util.Map" >
+	 update apps_t_sys_attachment set savestate = 2 where 1=1
+	 	<if test="busiId != null and busiId !='' ">
+			and busiId=#{busiId}
+		</if>
+	 	<if test="busiType != null and busiType !='' ">
+			and busiType = #{busiType}
+		</if>
+		<if test="attachmentId != null and attachmentId !='' ">
+			and attachmentId = #{attachmentId}
+		</if>  
+	</update>
+	<!-- 删除多个附件 -->
+	<delete id="deleteAttachmentIds" parameterType = "java.util.List" >
+		delete from apps_t_sys_attachment where 1=1 and attachmentId in (
+		<foreach collection="array" item="attachmentId" index="idx">
+				<if test="idx>0">,</if>
+				#{attachmentId}
+		</foreach>
+		)
+	</delete>
+	
+	<!-- 根据附件ID批量查询附件 -->
+	<select id="selectAttachmentListByIds" parameterType="java.util.List" resultType="org.air.bigearth.apps.file.domain.Attachment">
+		SELECT * FROM apps_t_sys_attachment A
+		WHERE A.STATUS = '1'
+		AND ATTACHMENTID IN(
+		<foreach collection="list" item="attId" index="idx">
+				<if test="idx>0">,</if>
+				#{attId}
+		</foreach>
+		)
+	</select>
+
+	<!-- 更新数据列表 -->
+	<update id="updateDto" parameterType = "org.air.bigearth.apps.file.domain.Attachment">
+		update "public".apps_t_sys_attachment set attachmentId = attachmentId
+		<if test="fileName != null">
+			,fileName = #{fileName}
+		</if>
+		<if test="originalFileName != null">
+			,originalFileName = #{originalFileName}
+		</if>
+		<if test="updateTime != null">
+			,updateTime = #{updateTime}
+		</if>
+		<if test="uploadMetadata != null">
+			,uploadMetadata = #{uploadMetadata}
+		</if>
+		<if test="fileShare != null">
+			,fileShare = #{fileShare}
+		</if>
+		where 1 = 1
+		<if test="attachmentId != null">
+			and attachmentId = #{attachmentId}
+		</if>
+	</update>
+</mapper>

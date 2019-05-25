@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.air.bigearth.apps.file.mapper.FileStrategyMapper">
+	<resultMap id="BaseResultMap" type="org.air.bigearth.apps.file.domain.FileStrategy">
+    <id column="STRATEGYID" jdbcType="VARCHAR" property="strategyId" />
+    <result column="STRATEGYCODE" jdbcType="VARCHAR" property="strategyCode" />
+    <result column="STRATEGYNAME" jdbcType="VARCHAR" property="strategyName" />
+    <result column="BASEPATH" jdbcType="VARCHAR" property="basePath" />
+    <result column="TRANSPORTTYPE" jdbcType="VARCHAR" property="transportType" />
+    <result column="TRANSPORTHOST" jdbcType="VARCHAR" property="transportHost" />
+    <result column="TRANSPORTPORT" jdbcType="VARCHAR" property="transportPort" />
+    <result column="TRANSPORTACCOUNT" jdbcType="VARCHAR" property="transportAccount" />
+    <result column="TRANSPORTPASSWORD" jdbcType="VARCHAR" property="transportPassword" />
+    <result column="FILESIZELIMIT" jdbcType="DECIMAL" property="filesizeLimit" />
+    <result column="UPLOADFILETYPE" jdbcType="VARCHAR" property="uploadfileType" />
+    <result column="FORBIDFILETYPE" jdbcType="VARCHAR" property="forbidfileType" />
+    <result column="ENCRYPTTYPE" jdbcType="VARCHAR" property="encryptType" />
+    <result column="COMPRESSEDFLAG" jdbcType="CHAR" property="compressedFlag" />
+    <result column="FILEPATHRULE" jdbcType="VARCHAR" property="filepathRule" />
+    <result column="CREATEUSERID" jdbcType="VARCHAR" property="createuserId" />
+    <result column="CREATEORGID" jdbcType="VARCHAR" property="createorgId" />
+    <result column="CREATETIME" jdbcType="VARCHAR" property="createTime" />
+    <result column="DBVERSION" jdbcType="TIMESTAMP" property="dbVersion" />
+    <result column="STATE" jdbcType="CHAR" property="state" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="MAXUPLOADFILENUMBER" jdbcType="CHAR" property="maxUploadFileNumber" />
+    <result column="ISMULTIFILEUPLOAD" jdbcType="VARCHAR" property="isMultiFileUpload" />
+  </resultMap>
+  
+	<insert id="insertFileStrategyDTO" parameterType="org.air.bigearth.apps.file.domain.FileStrategy">
+		insert into apps_t_sys_filestrategy
+			(strategyId,strategyName,strategyType,allowSize,allowType,notAllowType,allowNumber,serverType,saveCatalog,maxUploadFileNumber,isMultiFileUpload)
+    	values
+    		(#{strategyId},#{strategyName},#{strategyType},#{allowSize},#{allowType},#{notAllowType},#{allowNumber},#{serverType},#{saveCatalog},#{maxUploadFileNumber},#{isMultiFileUpload})
+	</insert>
+	 
+	
+	<select id="getByFileStrategyId" parameterType="java.lang.String" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+   		<![CDATA[  
+			SELECT strategyId,strategyName,strategyType,allowSize,allowType,notAllowType,allowNumber,serverType,saveCatalog,remark
+			  FROM apps_t_sys_filestrategy
+			  WHERE strategyId = #{strategyId}
+		]]> 
+	</select>
+	
+	<select id="getByType" parameterType="java.lang.String" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+   		<![CDATA[  
+			SELECT strategyId,strategyName,strategyType,allowSize,allowType,notAllowType,allowNumber,serverType,saveCatalog,remark
+			  FROM apps_t_sys_filestrategy
+			  WHERE strategyType = #{strategyType}
+		]]> 
+	</select>
+	
+	<!-- 查询列表 -->
+	<select id="searchByParamsPage" parameterType="java.util.Map" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+		select STRATEGYID, STRATEGYCODE, STRATEGYNAME, BASEPATH, TRANSPORTTYPE, TRANSPORTHOST, TRANSPORTPORT, 
+               TRANSPORTACCOUNT, TRANSPORTPASSWORD, FILESIZELIMIT, UPLOADFILETYPE, FORBIDFILETYPE, 
+    		   CREATEUSERID, CREATEORGID,STATE,
+    		   (case state when '1' then '启用' when '2' then '停用' else '启用' end) as stateName,
+    		   (case ENCRYPTTYPE when '1' then 'AES' when '2' then 'DES' when '0' then '不加密' else 'AES' end) as ENCRYPTTYPE,
+    		   (case COMPRESSEDFLAG when '1' then '是' when '2' then '否' else '是' end) as COMPRESSEDFLAG,
+			  filepathRule,DBVERSION,STATUS,REMARK,isMultiFileUpload,maxUploadFileNumber
+		 from apps_t_sys_filestrategy where status = '1'
+		<if test="strategyName != null and strategyName !='' ">
+			and STRATEGYNAME like '%'||#{strategyName}||'%'
+		</if>
+		<if test="strategyCode != null and strategyCode !='' ">
+			and STRATEGYCODE like '%'||#{strategyCode}||'%'
+		</if>
+		<if test="strategyId != null and strategyId !='' ">
+			and strategyId=#{strategyId}
+		</if>
+	</select>
+	
+	<!-- 批量启用 -->
+	<update id="enableByIds" parameterType = "java.util.Map" >
+		update apps_t_sys_filestrategy set state = #{state}  where  strategyId = #{strategyId}
+	</update>
+	
+	
+	<!-- 根据菜单id查询 （新）-->
+	<select id="getById" parameterType="String" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+		select * from apps_t_sys_filestrategy where status = '1' and strategyId = #{strategyId}
+	</select>
+	
+	<!-- 根据菜单code查询 -->
+	<select id="getByCode" parameterType="String" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+		select * from apps_t_sys_filestrategy where status = '1' and STATE='1' and strategyCode = #{strategyCode}
+	</select>
+	
+    <!-- 更新数据列表 -->
+	<update id="updateDto" parameterType = "org.air.bigearth.apps.file.domain.FileStrategy">
+	  update apps_t_sys_filestrategy set strategyId = strategyId
+	 	<if test="strategyCode != null">
+			,strategyCode = #{strategyCode} 
+		</if>
+		<if test="strategyName != null">
+			,strategyName = #{strategyName} 
+		</if>
+		<if test="basePath != null">
+			,basePath = #{basePath} 
+		</if>
+		<if test="transportType != null">
+			,transportType = #{transportType} 
+		</if>
+			,filesizeLimit = #{filesizeLimit} 
+		<if test="uploadfileType != null">
+			,uploadfileType = #{uploadfileType} 
+		</if>	
+		<if test="forbidfileType != null">
+			,forbidfileType = #{forbidfileType} 
+		</if>
+		 <if test="encryptType != null">
+			,encryptType = #{encryptType} 
+		</if>
+		<if test="compressedFlag != null">
+			,compressedFlag = #{compressedFlag} 
+		</if>
+		<if test="filepathRule != null">
+			,filepathRule = #{filepathRule} 
+		</if>
+		<if test="remark != null">
+			,remark = #{remark} 
+		</if>
+		<if test="maxUploadFileNumber != null">
+			,maxUploadFileNumber = #{maxUploadFileNumber} 
+		</if>
+		<if test="isMultiFileUpload != null">
+			,isMultiFileUpload = #{isMultiFileUpload} 
+		</if>
+		where 1 = 1 
+		<if test="strategyId != null">
+			and strategyId = #{strategyId} 
+		</if>		
+	</update>
+	
+	
+	<!-- 更新组织状态 -->
+	<update id="changeState">
+		UPDATE apps_t_sys_filestrategy SET STATE=#{state} WHERE STRATEGYID IN (
+			<foreach collection="strategyIds" item="strategyId" index="idx">
+				<if test="idx>0">,</if>
+				#{strategyId}
+			</foreach>
+			) 
+			<if test="state=='2' or state==2">
+				AND strategyCode!='default'
+			</if>
+	</update>
+	
+	 <!-- 批量更新数据列表 -->
+	<update id="updateAllDto" parameterType = "org.air.bigearth.apps.file.domain.FileStrategy">
+	  update apps_t_sys_filestrategy set
+		<if test="transportType != null">
+			transportType = #{transportType} 
+		</if>
+		<if test="filesizeLimit != null">
+			,filesizeLimit = #{filesizeLimit} 
+		</if>
+		 <if test="encryptType != null">
+			,encryptType = #{encryptType} 
+		</if>
+		<if test="compressedFlag != null">
+			,compressedFlag = #{compressedFlag} 
+		</if>
+		<if test="filepathRule != null">
+			,filepathRule = #{filepathRule} 
+		</if>
+		<if test="remark != null">
+			,remark = #{remark} 
+		</if>
+		where 1 = 1
+		<if test="strategyId != null">
+			and strategyId = #{strategyId} 
+		</if>
+	</update>
+	<!-- 查询文件策略列表 -->
+	<select id="selectFileStrategyList" resultType="org.air.bigearth.apps.file.domain.FileStrategy">
+   		<![CDATA[  
+			SELECT * FROM apps_t_sys_filestrategy WHERE STATUS='1'
+		]]> 
+	</select>
+</mapper>

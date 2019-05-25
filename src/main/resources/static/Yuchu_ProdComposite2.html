@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Title</title>
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+<style>
+#btns{
+    position:absolute;
+    left:20px;top:100px;
+    z-index:100;
+    background-color: #222;
+    border-color: #90feb5;
+}
+#mapid{
+z-index:1;
+}
+
+</style>
+
+
+<div>
+<div id="mapid">  </div>
+ <div>
+        <div  id="btns" style="display: inline-block;" >
+            <input type="button" class="btn" id="data-draw-btn"  value="Start Draw Polygon" style="display: block;"></input>
+            <input type="button" class="btn" id="data-query-btn"  value="Search" style="display: block;"></input>
+            <input type="button" class="btn" id="visual-composite-btn"  value="Visual composite" style="display: block;"></input>
+            <input type="button" class="btn" id="prod-composite-btn"  value="Production composite" style="display: block;"></input>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+   $("#mapid").height($(window).height()).width($(window).width());
+    var mymap = L.map('mapid').setView([39.8, 116.6], 9);
+    mymap.invalidateSize();
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+	$("#prod-composite-btn").on("click", productionComposite);
+	$("#data-draw-btn").on("click", drawOnMap);
+
+    function productionComposite(){
+         alert("Here we go")
+         var Ajax_prodComposite = null;
+         if (window.XMLHttpRequest)
+         {// code for IE7+, Firefox, Chrome, Opera, Safari
+            Ajax_prodComposite=new XMLHttpRequest();
+          }
+          else
+          {// code for IE6, IE5
+             Ajax_prodComposite=new ActiveXObject("Microsoft.XMLHTTP");
+          }
+         Ajax_prodComposite.open("GET","http://192.168.1.49:8080/proComposite");
+         Ajax_prodComposite.onreadystatechange=callback;
+         Ajax_prodComposite.send(null);
+
+        function callback( )
+       {
+        if(Ajax_prodComposite.readyState==4 && Ajax_prodComposite.status==200)
+       {
+            alert("We get the composite product.")
+        }
+        else
+        {
+            alert("The task failed.")
+        }
+     }
+};
+
+    var isDrawding = false;
+    function drawOnMap(){
+        if(isDrawding == true) {
+             isDrawding = false;
+             document.getElementById('data-draw-btn').value = "Start Draw Polygon";
+             return 0;
+         }
+         else
+         {
+             isDrawding = true;
+             document.getElementById('data-draw-btn').value = "We are Drawing";
+             return 0;
+         }
+     }
+
+   mymap.on("click", onMapClick);
+   mymap.on('dblclick',onMapDoubleClick);
+   mymap.on('mousemove',onMapMove);
+
+    var points=[]
+    var lines=new L.polyline([])
+    var tempLines=new L.polyline([],{dashArray:5})
+    var polygon_Current = new L.polygon([])
+
+        function onMapClick(e) {
+            if(true == isDrawding){
+             points.push([e.latlng.lat,e.latlng.lng])
+             lines.addLatLng(e.latlng)
+             mymap.addLayer(tempLines)
+             mymap.addLayer(lines)
+             //mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'fff000',fillOpacity:1}))
+             }
+          }
+
+          function onMapMove(e) {
+                 if(true == isDrawding){
+                 if(points.length>0) {
+                    ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng],points[0]]
+                    tempLines.setLatLngs(ls)
+                    mymap.addLayer(tempLines)
+               }
+             }
+          }
+
+           function onMapDoubleClick(e){
+               if(true == isDrawding){
+                  if (polygon_Current.isEmpty() == false){
+                       mymap.removeLayer(polygon_Current)
+                       polygon_Current = new L.polygon(points)
+                       mymap.addLayer(polygon_Current)
+                  }
+                  else{
+                      polygon_Current = new L.polygon(points)
+                       mymap.addLayer(polygon_Current)
+                  }
+                  points=[]
+                  mymap.removeLayer(lines)
+                  lines.remove()
+                  mymap.removeLayer(tempLines)
+                  tempLines.remove()
+                  lines=new L.polyline([])
+
+                  }
+           }
+
+
+   $("#data-query-btn").on("click", imageQuery);
+
+
+
+    var DSName="landsat8";
+    var startDate="2014-07-15";
+    var endDate="2015-03-13";
+    var baseurl ="/retrieve/query"
+
+
+
+     function makeQueryStr(pointlist){
+            var paramsQuery = {};
+            paramsQuery["ds"] = DSName;
+            paramsQuery["st"] = startDate;
+            paramsQuery["et"] = endDate;
+            paramsQuery["extent"] = pointlist
+
+            return paramsQuery;
+     }
+
+
+     function imageQuery(){
+        var pointlist = polygon_Current.getLatLngs()
+        pointlist = pointlist.toString();
+
+        if(pointlist.length==0 ){
+           alert("Please select  the extent");
+           return 0;
+         }
+         pointlist = pointlist.match(/(\d+(\.\d+)?)/g);
+         if(pointlist.length%2 !=0 ){
+           alert("Please select the extent again.");
+           return 0;
+         }
+
+         var parametersQuery = makeQueryStr(pointlist);
+         //alert($.toJSON(parametersQuery))
+
+         $.ajax({
+               url : baseurl,
+				data : JSON.stringify(
+                    $.toJSON(parametersQuery)
+                ),
+                dataType : "json",
+                contentType:"application/json;charset=utf-8",
+				type: "post",
+				success : function(data) {
+                    alert(JSON.stringify(data));
+				},
+				error : function(xhr, code, what){
+                    alert("错误！！")
+				 }
+			});
+
+ }
+
+
+</script>
+
+
+
+
+</body>
+</html>

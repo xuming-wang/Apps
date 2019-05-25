@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>用户注册</title>
+</head>
+<body>
+  <h1>用户注册</h1>
+  <!--错误信息:<h4 th:text="${msg}"></h4>-->
+  <h4 th:text="${msg}"></h4>
+  <form action="/register"  method = "post">
+   帐号：<input  type = "text"  name = "loginName"/><br>
+   密码： <input  type = "password" name = "password"/><br>
+   确认密码：<input type = "text" name = "confirmPassword"/><br>
+   <!--出生日期：<input type = "text" name = "birthday"/><br>-->
+   <input type = "submit"  value = "注册"><br>
+  </form>
+</body>
+</html>

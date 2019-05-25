@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.air.bigearth.apps.system.mapper.extend.UserRoleExtendMapper" >
+ 
+  <resultMap id="BaseResultMap" type="org.air.bigearth.apps.system.domain.basic.UserRole" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+     <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="yw_id" property="yw_id" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <insert id="batchInsert">
+  	INSERT INTO apps_t_sys_user_role (id, user_id, role_id, yw_id)
+		VALUES
+		<foreach collection="userRoleList" item="userRole" separator=",">
+			(#{userRole.id,jdbcType=VARCHAR},
+			#{userRole.userId,jdbcType=VARCHAR},
+			#{userRole.roleId,jdbcType=VARCHAR},
+			#{userRole.ywId,jdbcType=VARCHAR})			
+		</foreach>
+  </insert>
+  
+  <delete id="deleteByUserId">
+	DELETE
+	FROM
+      apps_t_sys_user_role
+	WHERE
+		user_id in 
+		<foreach collection="userIdList" item="userId" open="(" close=")" separator=",">
+			#{userId,jdbcType=VARCHAR}
+		</foreach>
+  </delete>
+  
+  <delete id="deleteByRoleId">
+  		DELETE
+	FROM
+		apps_t_sys_user_role
+	WHERE
+		role_id = #{roleId,jdbcType=VARCHAR} 
+  </delete>
+  
+  <select id="getRoleByUser" resultType="string">
+  	select role_id from apps_t_sys_user_role where user_id=#{userId,jdbcType=VARCHAR}
+  </select>
+</mapper>

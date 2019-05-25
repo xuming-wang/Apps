@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.air.bigearth.apps.system.mapper.extend.UserExtendMapper" >
+  <resultMap id="BaseResultMap" type="org.air.bigearth.apps.system.domain.basic.User" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+     <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectByName" resultMap="BaseResultMap">
+	SELECT
+		id,
+		login_name,
+		real_name,
+		password,
+		superman
+	FROM
+		apps_t_sys_user
+	WHERE
+		login_name = #{account,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="isExist" resultType="int">
+  	select count(1) from apps_t_sys_user where login_name = #{loginName,jdbcType=VARCHAR}
+  </select>
+
+	<select id="phoneUnique" resultType="int">
+  	select count(1) from apps_t_sys_user where phone = #{phone,jdbcType=VARCHAR}
+  </select>
+
+	<select id="emailUnique" resultType="int">
+  	select count(1) from apps_t_sys_user where email = #{email,jdbcType=VARCHAR}
+  </select>
+</mapper>
